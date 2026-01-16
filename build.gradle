@@ -14,7 +14,7 @@ dependencies {
     // Google Guice for Dependency Injection
     implementation 'com.google.inject:guice:7.0.0'
 
-    implementation 'com.google.googlejavaformat:google-java-format:1.19.2'
+
 
     // SLF4J API
     implementation 'org.slf4j:slf4j-api:2.0.13'
@@ -38,6 +38,10 @@ test {
 
 spotless {
     java {
-        googleJavaFormat()
+        target 'src/**/*.java'
+        eclipse().configFile('.eclipse-formatter.xml')
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
     }
 }
