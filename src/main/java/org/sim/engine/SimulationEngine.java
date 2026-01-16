@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.sim.event.Event;
 
 @Slf4j
 @AllArgsConstructor(onConstructor_ = @Inject)

@@ -14,7 +14,7 @@ dependencies {
     // Google Guice for Dependency Injection
     implementation 'com.google.inject:guice:7.0.0'
 
-
+    implementation 'org.apache.commons:commons-math3:3.6.1'
 
     // SLF4J API
     implementation 'org.slf4j:slf4j-api:2.0.13'

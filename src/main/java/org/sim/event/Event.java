@@ -1,4 +1,4 @@
-package org.sim.engine;
+package org.sim.event;
 
 public interface Event extends Comparable<Event> {
 

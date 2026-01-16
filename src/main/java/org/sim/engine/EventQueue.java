@@ -1,5 +1,7 @@
 package org.sim.engine;
 
+import org.sim.event.Event;
+
 import java.util.PriorityQueue;
 
 public class EventQueue {
