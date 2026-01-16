@@ -11,6 +11,7 @@ public class BinomialServiceTimeDistribution implements ServiceTimeDistribution 
     public BinomialServiceTimeDistribution(final int n, final double p) {
         dist = new BinomialDistribution(n, p);
     }
+
     @Override
     public double sample() {
         return dist.sample();
