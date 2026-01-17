@@ -16,9 +16,14 @@ echo "[2/3] Applying code formatting with Spotless..."
 echo "✓ Code formatting applied"
 
 echo ""
-echo "[3/3] Building project..."
+echo "[3/4] Building project..."
 ./gradlew build
 echo "✓ Build successful"
+
+echo ""
+echo "[4/4] Running application..."
+./gradlew run
+echo "✓ Application run completed"
 
 echo ""
 echo "=========================================="

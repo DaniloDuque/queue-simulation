@@ -16,6 +16,8 @@ import org.sim.event.EventGenerator;
 import org.sim.stat.StatisticsCollector;
 import org.sim.station.ServiceStation;
 import org.sim.station.StationRouter;
+
+import java.util.HashMap;
 import java.util.LinkedList;
 
 public class SimulationModule extends AbstractModule {
@@ -23,7 +25,8 @@ public class SimulationModule extends AbstractModule {
     @Provides
     @Singleton
     StatisticsCollector provideStatisticsCollector() {
-        return new StatisticsCollector(new LinkedList<>());
+        return new StatisticsCollector(new LinkedList<>(), new HashMap<>(),
+                                        new HashMap<>(), new HashMap<>());
     }
 
     @Provides

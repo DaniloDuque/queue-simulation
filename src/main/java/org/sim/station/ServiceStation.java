@@ -40,6 +40,9 @@ public class ServiceStation {
         final double serviceTime = engine.now() - client.getServiceStartTime();
         client.addWaitingTimeInService(serviceTime);
 
+        // Track per-station service time
+        statisticsCollector.addStationServiceTime(name, serviceTime);
+
         // send event to the next station in the sequence
         final Queue<ServiceStation> clientStationSequence = client.getStationSequence();
         if (!clientStationSequence.isEmpty()) {
@@ -61,6 +64,9 @@ public class ServiceStation {
         // Calculate queue waiting time
         final double queueTime = engine.now() - client.getQueueStartTime();
         client.addWaitingTimeInQueue(queueTime);
+
+        // Track per-station queue time
+        statisticsCollector.addStationQueueTime(name, queueTime);
 
         client.setServiceStartTime(engine.now()); // Track service start
         busyWorkers++;

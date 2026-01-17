@@ -3,8 +3,8 @@ package org.sim.station;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import lombok.AllArgsConstructor;
-import java.util.LinkedList;
-import java.util.Queue;
+
+import java.util.*;
 
 import org.sim.module.Constants;
 
@@ -19,22 +19,30 @@ public class StationRouter {
 
     public Queue<ServiceStation> getStationSequence() {
         final Queue<ServiceStation> stationSequence = new LinkedList<>();
+        final List<ServiceStation> shuffleList = new ArrayList<>();
 
+        // Cashier is always first
         if (Math.random() < Constants.CASHIER_PROB) {
             stationSequence.add(cashier);
         }
+
+        // Add other stations to shuffle list based on probabilities
         if (Math.random() < Constants.DRINKS_PROB) {
-            stationSequence.add(drinks);
+            shuffleList.add(drinks);
         }
         if (Math.random() < Constants.FRIER_PROB) {
-            stationSequence.add(frier);
+            shuffleList.add(frier);
         }
         if (Math.random() < Constants.DESERT_PROB) {
-            stationSequence.add(desert);
+            shuffleList.add(desert);
         }
         if (Math.random() < Constants.CHICKEN_PROB) {
-            stationSequence.add(chicken);
+            shuffleList.add(chicken);
         }
+
+        // Shuffle the remaining stations
+        Collections.shuffle(shuffleList);
+        stationSequence.addAll(shuffleList);
 
         return stationSequence;
     }

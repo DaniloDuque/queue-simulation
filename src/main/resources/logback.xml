@@ -1,0 +1,19 @@
+<configuration>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %green([%level]) - %msg%n</pattern>
+        </encoder>
+    </appender>
+    
+    <!-- Alternative colored appender for different log levels -->
+    <appender name="COLORED" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %green([%level]) - %highlight(%msg)%n</pattern>
+        </encoder>
+    </appender>
+    
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+    <logger name="org.sim" level="DEBUG"/>
+</configuration>

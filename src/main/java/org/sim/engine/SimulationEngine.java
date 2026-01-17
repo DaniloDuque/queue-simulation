@@ -25,24 +25,17 @@ public class SimulationEngine {
         log.info("Simulation started");
 
         while (true) {
-            Event currentEvent = eventQueue.nextEvent();
+            final Event currentEvent = eventQueue.nextEvent();
 
             if (currentEvent == null || currentEvent.time() > untilTime) {
                 break;
             }
 
             clock.advanceTo(currentEvent.time());
-            log.info("Processing event {} at time {}",
-                                            currentEvent.getClass().getSimpleName(),
-                                            clock.now());
             currentEvent.process();
         }
 
         log.info("Simulation finished at time {}", clock.now());
-    }
-
-    private boolean isRunning(@NonNull final Event next, final double untilTime) {
-        return next.time() <= untilTime;
     }
 
 }
