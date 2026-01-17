@@ -38,7 +38,6 @@ public class SimulationEngine {
             currentEvent.process();
         }
 
-        clock.advanceTo(untilTime); // Ensure clock shows correct end time
         log.info("Simulation finished at time {}", clock.now());
     }
 
