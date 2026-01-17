@@ -1,20 +1,26 @@
 package org.sim.model;
 
-import java.util.Collection;
+import java.util.Queue;
 
 import org.sim.station.ServiceStation;
 
 import lombok.Getter;
-import lombok.Setter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
 public class Client {
-
     private final long id;
-    private final Collection<ServiceStation> stationSequence;
+    private final Queue<ServiceStation> stationSequence;
 
-    @Setter
-    private double totalWaitingTime = 0.0;
+    private double totalWaitingTimeInQueue = 0.0;
+    private double totalWaitingTimeInService = 0.0;
+
+    public void addWaitingTimeInQueue(final double waitingTimeInQueue) {
+        totalWaitingTimeInQueue += waitingTimeInQueue;
+    }
+
+    public void addWaitingTimeInService(final double waitingTimeInService) {
+        totalWaitingTimeInService += waitingTimeInService;
+    }
 }

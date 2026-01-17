@@ -20,7 +20,4 @@ public class EventQueue {
         return queue.isEmpty();
     }
 
-    public int getSize() {
-        return queue.size();
-    }
 }

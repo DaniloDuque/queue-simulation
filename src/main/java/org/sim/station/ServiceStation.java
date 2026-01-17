@@ -2,21 +2,20 @@ package org.sim.station;
 
 import java.util.Queue;
 
-import com.google.inject.Inject;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.sim.distribution.ServiceTimeDistribution;
 import org.sim.engine.SimulationEngine;
-import org.sim.event.DepartureEvent;
+import org.sim.event.LeaveEvent;
 import org.sim.model.Client;
 
 @Slf4j
-@AllArgsConstructor(onConstructor_ = @Inject)
+@AllArgsConstructor
 public class ServiceStation {
 
-    private final String name;
     private final int workers;
+    private final String name;
     private final ServiceTimeDistribution dist;
     private final Queue<Client> queue;
 
@@ -30,20 +29,28 @@ public class ServiceStation {
         }
     }
 
-    private void startService(Client client, SimulationEngine engine) {
-        busyWorkers++;
-        double serviceTime = dist.sample();
-        engine.schedule(new DepartureEvent(engine.now() + serviceTime, this, client, engine));
-    }
+    public void leave(@NonNull final Client client,
+                                    @NonNull final SimulationEngine engine) {
 
-    public void completeService(Client finishedClient, SimulationEngine engine) {
-        // later we will forward finishedClient to next station
+        // send event to the next station in the sequence
+        final Queue<ServiceStation> clientStationSequence = client.getStationSequence();
+        if (!clientStationSequence.isEmpty()) {
+            final ServiceStation nextStation = clientStationSequence.poll();
+            nextStation.arrive(client, engine);
+        }
 
         if (queue.isEmpty()) {
             busyWorkers--;
         } else {
             startService(queue.poll(), engine);
         }
+    }
+
+    private void startService(@NonNull final Client client,
+                                    @NonNull final SimulationEngine engine) {
+        busyWorkers++;
+        final double leaveTime = dist.sample() + engine.now();
+        engine.schedule(new LeaveEvent(leaveTime, this, client, engine));
     }
 
 }

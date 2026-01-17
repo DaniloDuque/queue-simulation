@@ -3,6 +3,7 @@ package org.sim.event;
 public interface Event extends Comparable<Event> {
 
     double time(); // scheduled time of event
+
     void process(); // what happens when event fires
 
     @Override

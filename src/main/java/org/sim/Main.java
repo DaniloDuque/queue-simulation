@@ -1,21 +1,19 @@
 package org.sim;
 
-// TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import org.sim.engine.SimulationEngine;
+import org.sim.event.EventGenerator;
+import org.sim.module.SimulationModule;
+
 public class Main {
     public static void main(String[] args) {
-        // TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the
-        // highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.print("Hello and welcome!");
+        Injector injector = Guice.createInjector(new SimulationModule());
 
-        for (int i = 1; i <= 5; i++) {
-            // TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have
-            // set one <icon
-            // src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut
-            // actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
-        }
+        EventGenerator generator = injector.getInstance(EventGenerator.class);
+        SimulationEngine engine = injector.getInstance(SimulationEngine.class);
+
+        generator.generateEventsUntil(3600 * 8.0).forEach(engine::schedule);
+        engine.run(3600 * 8.0);
     }
 }

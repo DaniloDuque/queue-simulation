@@ -2,7 +2,6 @@ package org.sim.engine;
 
 import com.google.inject.Inject;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.sim.event.Event;
@@ -13,22 +12,16 @@ public class SimulationEngine {
 
     private final SimulationClock clock;
     private final EventQueue eventQueue;
-    private boolean eventsRunning = true;
 
     public double now() {
         return clock.now();
     }
 
-    public int getQueueSize() {
-        return eventQueue.getSize();
-    }
-
     public void schedule(@NonNull final Event event) {
         eventQueue.schedule(event);
-        log.debug("Scheduled event {} at time {}", event.getClass().getSimpleName(), event.time());
     }
 
-    public void run(final double untilTime) {
+    public void run(final double untilTime) throws IllegalArgumentException {
         log.info("Simulation started");
 
         while (!eventQueue.isEmpty()) {
@@ -39,17 +32,16 @@ public class SimulationEngine {
             }
 
             clock.advanceTo(next.time());
-            log.debug("Processing event {} at time {}", next.getClass().getSimpleName(),
-                    clock.now());
-
+            log.info("Processing event {} at time {}", next.getClass().getSimpleName(),
+                                            clock.now());
             next.process();
         }
 
         log.info("Simulation finished at time {}", clock.now());
     }
 
-    private boolean isRunning(final Event next, final double untilTime){
-        eventsRunning = next.time() > untilTime;
-        return eventsRunning;
+    private boolean isRunning(@NonNull final Event next, final double untilTime) {
+        return next.time() <= untilTime;
     }
+
 }

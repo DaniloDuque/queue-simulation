@@ -1,26 +1,25 @@
 package org.sim.event;
 
-import com.google.inject.Inject;
 import lombok.AllArgsConstructor;
-import org.sim.engine.SimulationEngine;
+import org.sim.engine.*;
 import org.sim.model.Client;
 import org.sim.station.ServiceStation;
 
-@AllArgsConstructor(onConstructor_ = @Inject)
-public class ArrivalEvent implements Event {
+@AllArgsConstructor
+public class LeaveEvent implements Event {
 
-    private final double arrivalTime;
-    private final Client client;
+    private final double departureTime;
     private final ServiceStation station;
+    private final Client client;
     private final SimulationEngine engine;
 
     @Override
     public double time() {
-        return arrivalTime;
+        return departureTime;
     }
 
     @Override
     public void process() {
-        station.arrive(client, engine);
+        station.leave(client, engine);
     }
 }

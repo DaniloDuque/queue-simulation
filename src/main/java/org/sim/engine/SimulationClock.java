@@ -16,8 +16,8 @@ public final class SimulationClock {
     public void advanceTo(final double newTime) throws IllegalArgumentException {
         if (newTime < currentTime) {
             final String errorMessage = String.format(
-                    "Clock cannot go backwards. Current time: %f, new time: %f", currentTime,
-                    newTime);
+                                            "Clock cannot go backwards. Current time: %f, new time: %f",
+                                            currentTime, newTime);
             log.error(errorMessage);
             throw new IllegalArgumentException(errorMessage);
         }

@@ -1,24 +1,24 @@
 package org.sim.station;
 
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import lombok.AllArgsConstructor;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import org.sim.module.Constants;
 
 @AllArgsConstructor(onConstructor_ = @Inject)
 public class StationRouter {
 
-    private final ServiceStation cashier;
-    private final ServiceStation drinks;
-    private final ServiceStation frier;
-    private final ServiceStation desert;
-    private final ServiceStation chicken;
+    private final @Named(Constants.CASHIER_STATION_NAME) ServiceStation cashier;
+    private final @Named(Constants.DRINKS_STATION_NAME) ServiceStation drinks;
+    private final @Named(Constants.FRIER_STATION_NAME) ServiceStation frier;
+    private final @Named(Constants.DESERT_STATION_NAME) ServiceStation desert;
+    private final @Named(Constants.CHICKEN_STATION_NAME) ServiceStation chicken;
 
-    public Collection<ServiceStation> getStationSequence() {
-        final List<ServiceStation> stationSequence = new ArrayList<>();
+    public Queue<ServiceStation> getStationSequence() {
+        final Queue<ServiceStation> stationSequence = new LinkedList<>();
 
         if (Math.random() < Constants.CASHIER_PROB) {
             stationSequence.add(cashier);
