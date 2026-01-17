@@ -17,11 +17,11 @@ public class Constants {
     public static final String CHICKEN_STATION_NAME = "Chicken";
 
     // number of workers per station
-    public static final int NUMBER_OF_CASHIER_WORKERS = 2;
+    public static final int NUMBER_OF_CASHIER_WORKERS = 3;
     public static final int NUMBER_OF_DRINKS_WORKERS = 2;
     public static final int NUMBER_OF_FRIER_WORKERS = 2;
     public static final int NUMBER_OF_DESERT_WORKERS = 1;
-    public static final int NUMBER_OF_CHICKEN_WORKERS = 1;
+    public static final int NUMBER_OF_CHICKEN_WORKERS = 5;
 
     // Workflow parameters
     public static final long MAX_CAPACITY = 10;

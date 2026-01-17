@@ -2,6 +2,7 @@ package org.sim.model;
 
 import java.util.Queue;
 
+import lombok.Setter;
 import org.sim.station.ServiceStation;
 
 import lombok.Getter;
@@ -14,7 +15,11 @@ public class Client {
     private final Queue<ServiceStation> stationSequence;
 
     private double totalWaitingTimeInQueue = 0.0;
+    @Setter
+    private double queueStartTime;
     private double totalWaitingTimeInService = 0.0;
+    @Setter
+    private double serviceStartTime;
 
     public void addWaitingTimeInQueue(final double waitingTimeInQueue) {
         totalWaitingTimeInQueue += waitingTimeInQueue;

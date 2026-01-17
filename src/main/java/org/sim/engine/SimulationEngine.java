@@ -24,19 +24,21 @@ public class SimulationEngine {
     public void run(final double untilTime) throws IllegalArgumentException {
         log.info("Simulation started");
 
-        while (!eventQueue.isEmpty()) {
-            final Event next = eventQueue.nextEvent();
+        while (true) {
+            Event currentEvent = eventQueue.nextEvent();
 
-            if (!isRunning(next, untilTime)) {
+            if (currentEvent == null || currentEvent.time() > untilTime) {
                 break;
             }
 
-            clock.advanceTo(next.time());
-            log.info("Processing event {} at time {}", next.getClass().getSimpleName(),
+            clock.advanceTo(currentEvent.time());
+            log.info("Processing event {} at time {}",
+                                            currentEvent.getClass().getSimpleName(),
                                             clock.now());
-            next.process();
+            currentEvent.process();
         }
 
+        clock.advanceTo(untilTime); // Ensure clock shows correct end time
         log.info("Simulation finished at time {}", clock.now());
     }
 
