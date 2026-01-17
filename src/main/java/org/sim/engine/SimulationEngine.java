@@ -12,9 +12,14 @@ public class SimulationEngine {
 
     private final SimulationClock clock;
     private final EventQueue eventQueue;
+    private boolean eventsRunning = true;
 
     public double now() {
         return clock.now();
+    }
+
+    public int getQueueSize() {
+        return eventQueue.getSize();
     }
 
     public void schedule(@NonNull final Event event) {
@@ -28,7 +33,7 @@ public class SimulationEngine {
         while (!eventQueue.isEmpty()) {
             final Event next = eventQueue.nextEvent();
 
-            if (next.time() > untilTime) {
+            if (!isRunning(next, untilTime)) {
                 break;
             }
 
@@ -40,5 +45,10 @@ public class SimulationEngine {
         }
 
         log.info("Simulation finished at time {}", clock.now());
+    }
+
+    public boolean isRunning(final Event next, final double untilTime) {
+        eventsRunning = next.time() > untilTime;
+        return eventsRunning;
     }
 }

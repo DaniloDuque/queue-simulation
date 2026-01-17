@@ -13,10 +13,7 @@ import lombok.RequiredArgsConstructor;
 public class Client {
 
     private final long id;
-    private final double arrivalTime;
-
-    @Setter
-    private Collection<ServiceStation> stationSequence;
+    private final Collection<ServiceStation> stationSequence;
 
     @Setter
     private double totalWaitingTime = 0.0;

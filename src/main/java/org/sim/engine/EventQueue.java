@@ -19,4 +19,8 @@ public class EventQueue {
     public boolean isEmpty() {
         return queue.isEmpty();
     }
+
+    public int getSize() {
+        return queue.size();
+    }
 }
