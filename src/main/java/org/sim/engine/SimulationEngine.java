@@ -2,6 +2,7 @@ package org.sim.engine;
 
 import com.google.inject.Inject;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.sim.event.Event;
@@ -47,7 +48,7 @@ public class SimulationEngine {
         log.info("Simulation finished at time {}", clock.now());
     }
 
-    public boolean isRunning(final Event next, final double untilTime) {
+    private boolean isRunning(final Event next, final double untilTime){
         eventsRunning = next.time() > untilTime;
         return eventsRunning;
     }
