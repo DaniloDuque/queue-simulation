@@ -5,15 +5,15 @@ import org.apache.commons.math3.distribution.GeometricDistribution;
 
 public class GeometricServiceTimeDistribution implements ServiceTimeDistribution {
 
-    private final GeometricDistribution dist;
+	private final GeometricDistribution dist;
 
-    @Inject
-    public GeometricServiceTimeDistribution(final double p) {
-        dist = new GeometricDistribution(p);
-    }
+	@Inject
+	public GeometricServiceTimeDistribution(final double p) {
+		dist = new GeometricDistribution(p);
+	}
 
-    @Override
-    public double sample() {
-        return dist.sample();
-    }
+	@Override
+	public double sample() {
+		return dist.sample();
+	}
 }

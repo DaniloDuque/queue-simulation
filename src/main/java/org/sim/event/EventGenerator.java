@@ -13,42 +13,38 @@ import org.apache.commons.math3.distribution.ExponentialDistribution;
 import org.sim.engine.SimulationEngine;
 import org.sim.station.StationRouter;
 import org.sim.station.ServiceStation;
-import org.sim.model.Client;
+import org.sim.client.Client;
 
 @Slf4j
 @AllArgsConstructor(onConstructor_ = @Inject)
 public class EventGenerator {
-    private final StationRouter stationRouter;
-    private final ExponentialDistribution exponentialDistribution;
-    private final SimulationEngine simulationEngine;
+	private final StationRouter stationRouter;
+	private final ExponentialDistribution exponentialDistribution;
+	private final SimulationEngine simulationEngine;
 
-    public Collection<Event> generateEventsUntil(final double untilTime) {
-        final List<Event> eventSequence = new ArrayList<>();
-        double currentTime = 0;
-        int clientId = 0;
+	public Collection<Event> generateEventsUntil(final double untilTime) {
+		final List<Event> eventSequence = new ArrayList<>();
+		double currentTime = 0;
+		int clientId = 0;
 
-        while (currentTime <= untilTime) { // Change < to <=
-            double interArrivalTime = exponentialDistribution.sample();
-            currentTime += interArrivalTime;
+		while (currentTime <= untilTime) {
+			double interArrivalTime = exponentialDistribution.sample();
+			currentTime += interArrivalTime;
+			eventSequence.add(generateEvent(clientId++, currentTime));
+		}
 
-            // Always add the event, even if it goes slightly past untilTime
-            eventSequence.add(generateEvent(clientId++, currentTime));
-        }
+		log.info("Generated {} arrival events", eventSequence.size());
+		log.info("Last arrival at time: {}", eventSequence.getLast().time());
+		log.info("Target time: {}", untilTime);
 
-        log.info("Generated {} arrival events", eventSequence.size());
-        log.info("Last arrival at time: {}", eventSequence.get(eventSequence.size() - 1)
-                                        .time());
-        log.info("Target time: {}", untilTime);
+		return eventSequence;
+	}
 
-        return eventSequence;
-    }
+	private Event generateEvent(final int clientId, final double currentTime) {
+		final Queue<ServiceStation> stationSequence = stationRouter.getStationSequence();
+		final Client client = new Client(clientId, stationSequence);
 
-    private Event generateEvent(final int clientId, final double currentTime) {
-        final Queue<ServiceStation> stationSequence = stationRouter.getStationSequence();
-        final Client client = new Client(clientId, stationSequence);
-
-        return new ArrivalEvent(currentTime, client, stationSequence.peek(),
-                                        simulationEngine);
-    }
+		return new ArrivalEvent(currentTime, client, stationSequence.peek(), simulationEngine);
+	}
 
 }

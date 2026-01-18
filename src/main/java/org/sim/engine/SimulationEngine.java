@@ -10,32 +10,32 @@ import org.sim.event.Event;
 @AllArgsConstructor(onConstructor_ = @Inject)
 public class SimulationEngine {
 
-    private final SimulationClock clock;
-    private final EventQueue eventQueue;
+	private final SimulationClock clock;
+	private final EventQueue eventQueue;
 
-    public double now() {
-        return clock.now();
-    }
+	public double now() {
+		return clock.now();
+	}
 
-    public void schedule(@NonNull final Event event) {
-        eventQueue.schedule(event);
-    }
+	public void schedule(@NonNull final Event event) {
+		eventQueue.schedule(event);
+	}
 
-    public void run(final double untilTime) throws IllegalArgumentException {
-        log.info("Simulation started");
+	public void run(final double untilTime) throws IllegalArgumentException {
+		log.info("Simulation started");
 
-        while (true) {
-            final Event currentEvent = eventQueue.nextEvent();
+		while (true) {
+			final Event currentEvent = eventQueue.nextEvent();
 
-            if (currentEvent == null || currentEvent.time() > untilTime) {
-                break;
-            }
+			if (currentEvent == null || currentEvent.time() > untilTime) {
+				break;
+			}
 
-            clock.advanceTo(currentEvent.time());
-            currentEvent.process();
-        }
+			clock.advanceTo(currentEvent.time());
+			currentEvent.process();
+		}
 
-        log.info("Simulation finished at time {}", clock.now());
-    }
+		log.info("Simulation finished at time {}", clock.now());
+	}
 
 }

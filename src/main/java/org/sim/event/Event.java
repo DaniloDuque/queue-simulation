@@ -2,12 +2,12 @@ package org.sim.event;
 
 public interface Event extends Comparable<Event> {
 
-    double time(); // scheduled time of event
+	double time(); // scheduled time of event
 
-    void process(); // what happens when event fires
+	void process(); // what happens when event fires
 
-    @Override
-    default int compareTo(Event other) {
-        return Double.compare(this.time(), other.time());
-    }
+	@Override
+	default int compareTo(final Event other) {
+		return Double.compare(this.time(), other.time());
+	}
 }

@@ -5,16 +5,16 @@ import org.apache.commons.math3.distribution.NormalDistribution;
 
 public class NormalServiceTimeDistribution implements ServiceTimeDistribution {
 
-    private final NormalDistribution dist;
+	private final NormalDistribution dist;
 
-    @Inject
-    public NormalServiceTimeDistribution(final double mean, final double stdDev) {
-        dist = new NormalDistribution(mean, stdDev);
-    }
+	@Inject
+	public NormalServiceTimeDistribution(final double mean, final double stdDev) {
+		dist = new NormalDistribution(mean, stdDev);
+	}
 
-    // This is floored due to the project requirements
-    @Override
-    public double sample() {
-        return Math.max(0.0, Math.floor(dist.sample()));
-    }
+	// This is floored due to the project requirements
+	@Override
+	public double sample() {
+		return Math.max(0.0, Math.floor(dist.sample()));
+	}
 }
