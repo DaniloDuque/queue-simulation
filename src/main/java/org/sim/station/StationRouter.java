@@ -22,9 +22,7 @@ public class StationRouter {
 		final List<ServiceStation> optionalStations = new ArrayList<>();
 
 		// Cashier is always first
-		if (Math.random() < Constants.CASHIER_PROB) {
-			stationSequence.add(cashier);
-		}
+		stationSequence.add(cashier);
 
 		if (Math.random() < Constants.DRINKS_PROB) {
 			optionalStations.add(drinks);

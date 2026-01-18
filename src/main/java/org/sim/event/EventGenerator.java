@@ -43,8 +43,9 @@ public class EventGenerator {
 	private Event generateEvent(final int clientId, final double currentTime) {
 		final Queue<ServiceStation> stationSequence = stationRouter.getStationSequence();
 		final Client client = new Client(clientId, stationSequence);
+		final ServiceStation cashier = stationSequence.poll();
 
-		return new ArrivalEvent(currentTime, client, stationSequence.peek(), simulationEngine);
+		return new ArrivalEvent(currentTime, client, cashier, simulationEngine);
 	}
 
 }

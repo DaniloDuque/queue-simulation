@@ -11,6 +11,6 @@ public class OrderSizeGenerator {
 			Constants.CLIENT_NUMBER_OF_ORDER_PER_STATION_N, Constants.CLIENT_NUMBER_OF_ORDER_PER_STATION_P);
 
 	public static int generate() {
-		return dist.sample();
+		return Math.max(1, dist.sample());
 	}
 }
