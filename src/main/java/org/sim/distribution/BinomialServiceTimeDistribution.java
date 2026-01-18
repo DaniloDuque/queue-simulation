@@ -2,6 +2,7 @@ package org.sim.distribution;
 
 import com.google.inject.Inject;
 import org.apache.commons.math3.distribution.BinomialDistribution;
+import org.sim.module.Constants;
 
 public class BinomialServiceTimeDistribution implements ServiceTimeDistribution {
 
@@ -14,6 +15,6 @@ public class BinomialServiceTimeDistribution implements ServiceTimeDistribution 
 
 	@Override
 	public double sample() {
-		return dist.sample();
+		return dist.sample() * Constants.SECONDS_IN_MINUTE;
 	}
 }

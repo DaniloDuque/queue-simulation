@@ -49,7 +49,7 @@ public class SimulationModule extends AbstractModule {
 	@Provides
 	@Singleton
 	ExponentialDistribution provideArrivalDistribution() {
-		return new ExponentialDistribution(1.0 / Constants.ARRIVAL_LAMBDA);
+		return new ExponentialDistribution(1.0 / Constants.CLIENT_ARRIVAL_RATE_PER_SECOND);
 	}
 
 	@Provides
