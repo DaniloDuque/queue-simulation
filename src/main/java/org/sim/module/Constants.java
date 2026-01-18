@@ -26,13 +26,17 @@ public class Constants {
 
     // Station distribution parameters
     public static final double CASHIER_STATION_MEAN = 2.5 * 60.0;
+
     public static final double DRINKS_STATION_MEAN = 0.75 * 60.0;
+
     public static final double FRIER_STATION_MEAN = 3.0 * 60.0;
-    public static final double FRIER_STATION_STD = 1.0 * 60.0;
+    public static final double FRIER_STATION_STD = 1.0;
+
     public static final int DESERT_STATION_N = 5;
     public static final double DESERT_STATION_P = 0.6;
+
     public static final double CHICKEN_STATION_P = 0.1;
 
     // Client arrival rate lambda
-    public static final double ARRIVAL_LAMBDA = 0.2;
+    public static final double ARRIVAL_LAMBDA = 3;
 }

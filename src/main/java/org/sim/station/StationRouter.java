@@ -19,7 +19,7 @@ public class StationRouter {
 
     public Queue<ServiceStation> getStationSequence() {
         final Queue<ServiceStation> stationSequence = new LinkedList<>();
-        final List<ServiceStation> shuffleList = new ArrayList<>();
+        final List<ServiceStation> optionalStations = new ArrayList<>();
 
         // Cashier is always first
         if (Math.random() < Constants.CASHIER_PROB) {
@@ -28,22 +28,19 @@ public class StationRouter {
 
         // Add other stations to shuffle list based on probabilities
         if (Math.random() < Constants.DRINKS_PROB) {
-            shuffleList.add(drinks);
+            optionalStations.add(drinks);
         }
         if (Math.random() < Constants.FRIER_PROB) {
-            shuffleList.add(frier);
+            optionalStations.add(frier);
         }
         if (Math.random() < Constants.DESERT_PROB) {
-            shuffleList.add(desert);
+            optionalStations.add(desert);
         }
         if (Math.random() < Constants.CHICKEN_PROB) {
-            shuffleList.add(chicken);
+            optionalStations.add(chicken);
         }
 
-        // Shuffle the remaining stations
-        Collections.shuffle(shuffleList);
-        stationSequence.addAll(shuffleList);
-
+        stationSequence.addAll(optionalStations);
         return stationSequence;
     }
 }
