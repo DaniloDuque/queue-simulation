@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Singleton
-public final class SimulationClock {
+public class SimulationClock {
 
 	private double currentTime = 0.0;
 
