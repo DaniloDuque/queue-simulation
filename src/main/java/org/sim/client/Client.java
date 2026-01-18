@@ -14,12 +14,13 @@ public class Client {
 	private final long id;
 	private final Queue<ServiceStation> stationSequence;
 
-	private double totalWaitingTimeInQueue = 0.0;
 	@Setter
 	private double queueStartTime;
-	private double totalWaitingTimeInService = 0.0;
+	private double totalWaitingTimeInQueue = 0.0;
+
 	@Setter
 	private double serviceStartTime;
+	private double totalWaitingTimeInService = 0.0;
 
 	public void addWaitingTimeInQueue(final double waitingTimeInQueue) {
 		totalWaitingTimeInQueue += waitingTimeInQueue;
