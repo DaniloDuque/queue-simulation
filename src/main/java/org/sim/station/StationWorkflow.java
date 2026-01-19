@@ -1,25 +1,18 @@
 package org.sim.station;
 
+import lombok.Getter;
 import lombok.NonNull;
 
 import java.util.Collection;
 
+@Getter
 public class StationWorkflow {
 	private final ServiceStation currentStation;
-	private final Collection<ServiceStation> nextStations;
+	private final Collection<StationWorkflow> nextStations;
 
 	public StationWorkflow(@NonNull final ServiceStation currentStation,
-			@NonNull final Collection<ServiceStation> nextStations) {
+			@NonNull final Collection<StationWorkflow> nextStations) {
 		this.currentStation = currentStation;
 		this.nextStations = nextStations;
 	}
-
-	public ServiceStation getCurrentStation() {
-		return currentStation;
-	}
-
-	public Collection<ServiceStation> getNextStations() {
-		return nextStations;
-	}
-
 }

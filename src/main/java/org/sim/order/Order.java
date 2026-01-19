@@ -1,18 +1,19 @@
 package org.sim.order;
 
-import java.util.Queue;
-
 import lombok.Setter;
-import org.sim.station.ServiceStation;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.sim.station.ServiceStation;
+import org.sim.station.StationWorkflow;
+
+import java.util.Collection;
 
 @Getter
 @RequiredArgsConstructor
 public class Order {
 	private final long id;
-	private final Queue<ServiceStation> stationSequence;
+	private final StationWorkflow stationWorkflow;
 
 	@Setter
 	private double queueStartTime;
@@ -32,5 +33,13 @@ public class Order {
 
 	public int getOrderSizeForCurrentStation() {
 		return OrderSizeGenerator.generate();
+	}
+
+	public ServiceStation getCurrentStation() {
+		return stationWorkflow.getCurrentStation();
+	}
+
+	public Collection<StationWorkflow> getChildStationWorkflows() {
+		return stationWorkflow.getNextStations();
 	}
 }

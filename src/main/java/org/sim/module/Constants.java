@@ -5,7 +5,6 @@ public class Constants {
 	public static final double SECONDS_IN_MINUTE = 60;
 
 	// routing probabilities
-	public static final double CASHIER_PROB = 1;
 	public static final double DRINKS_PROB = 0.9;
 	public static final double FRIER_PROB = 0.7;
 	public static final double DESERT_PROB = 0.25;
@@ -18,7 +17,7 @@ public class Constants {
 	public static final String DESERT_STATION_NAME = "Desert";
 	public static final String CHICKEN_STATION_NAME = "Chicken";
 
-	// number of workers per station
+	// number of workers per station (total must be 12)
 	public static final int NUMBER_OF_CASHIER_WORKERS = 3;
 	public static final int NUMBER_OF_DRINKS_WORKERS = 2;
 	public static final int NUMBER_OF_FRIER_WORKERS = 2;

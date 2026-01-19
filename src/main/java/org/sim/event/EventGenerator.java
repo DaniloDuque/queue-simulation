@@ -6,14 +6,13 @@ import lombok.AllArgsConstructor;
 import java.util.Collection;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Queue;
 
 import org.apache.commons.math3.distribution.ExponentialDistribution;
 
 import org.sim.engine.SimulationEngine;
 import org.sim.station.StationRouter;
-import org.sim.station.ServiceStation;
 import org.sim.order.Order;
+import org.sim.station.StationWorkflow;
 
 @Slf4j
 @AllArgsConstructor(onConstructor_ = @Inject)
@@ -41,11 +40,10 @@ public class EventGenerator {
 	}
 
 	private Event generateEvent(final int clientId, final double currentTime) {
-		final Queue<ServiceStation> stationSequence = stationRouter.getStationSequence();
-		final Order order = new Order(clientId, stationSequence);
-		final ServiceStation cashier = stationSequence.poll();
+		final StationWorkflow stationWorkflow = stationRouter.getStationWorkflow();
+		final Order order = new Order(clientId, stationWorkflow);
 
-		return new ArrivalEvent(currentTime, order, cashier, simulationEngine);
+		return new ArrivalEvent(currentTime, order, simulationEngine);
 	}
 
 }

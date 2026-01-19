@@ -17,27 +17,26 @@ public class StationRouter {
 	private final @Named(Constants.DESERT_STATION_NAME) ServiceStation desert;
 	private final @Named(Constants.CHICKEN_STATION_NAME) ServiceStation chicken;
 
-	public Queue<ServiceStation> getStationSequence() {
-		final Queue<ServiceStation> stationSequence = new LinkedList<>();
-		final List<ServiceStation> optionalStations = new ArrayList<>();
-
-		// Cashier is always first
-		stationSequence.add(cashier);
+	public StationWorkflow getStationWorkflow() {
+		final List<StationWorkflow> nextStations = new ArrayList<>();
 
 		if (Math.random() < Constants.DRINKS_PROB) {
-			optionalStations.add(drinks);
+			final StationWorkflow drinksStationWorkflow = new StationWorkflow(drinks, Collections.emptyList());
+			nextStations.add(drinksStationWorkflow);
 		}
 		if (Math.random() < Constants.FRIER_PROB) {
-			optionalStations.add(frier);
+			final StationWorkflow frierStationWorkflow = new StationWorkflow(frier, Collections.emptyList());
+			nextStations.add(frierStationWorkflow);
 		}
 		if (Math.random() < Constants.DESERT_PROB) {
-			optionalStations.add(desert);
+			final StationWorkflow desertStationWorkflow = new StationWorkflow(desert, Collections.emptyList());
+			nextStations.add(desertStationWorkflow);
 		}
 		if (Math.random() < Constants.CHICKEN_PROB) {
-			optionalStations.add(chicken);
+			final StationWorkflow chickenStationWorkflow = new StationWorkflow(chicken, Collections.emptyList());
+			nextStations.add(chickenStationWorkflow);
 		}
 
-		stationSequence.addAll(optionalStations);
-		return stationSequence;
+		return new StationWorkflow(cashier, nextStations);
 	}
 }

@@ -1,5 +1,6 @@
 package org.sim.station;
 
+import java.util.Collection;
 import java.util.Queue;
 
 import com.google.inject.Inject;
@@ -43,10 +44,13 @@ public class ServiceStation {
 		statisticsCollector.addStationServiceTime(name, serviceTime);
 
 		// send event to the next station in the sequence
-		final Queue<ServiceStation> clientStationSequence = order.getStationSequence();
-		if (!clientStationSequence.isEmpty()) {
-			final ServiceStation nextStation = clientStationSequence.poll();
-			nextStation.arrive(order, engine);
+		final Collection<StationWorkflow> nextStations = order.getChildStationWorkflows();
+		if (!nextStations.isEmpty()) {
+			for (final StationWorkflow stationWorkflow : nextStations) {
+				final Order newOrder = new Order(order.getId(), stationWorkflow);
+				final ServiceStation nextStation = stationWorkflow.getCurrentStation();
+				nextStation.arrive(newOrder, engine);
+			}
 		} else {
 			statisticsCollector.addServedClient(order);
 		}
@@ -67,19 +71,21 @@ public class ServiceStation {
 	}
 
 	private void startService(@NonNull final Order order, @NonNull final SimulationEngine engine) {
+		final double currentTime = engine.now();
+
 		// Calculate queue waiting time
-		final double queueTime = engine.now() - order.getQueueStartTime();
+		final double queueTime = currentTime - order.getQueueStartTime();
 		order.addWaitingTimeInQueue(queueTime);
 
 		// Track per-station queue time
 		statisticsCollector.addStationQueueTime(name, queueTime);
 
-		order.setServiceStartTime(engine.now()); // Track service start
+		order.setServiceStartTime(currentTime); // Track service start
 		busyWorkers++;
 		final int numberOfOrders = order.getOrderSizeForCurrentStation();
-		final double serviceTimeForAllOrders = serviceTimeForOrders(numberOfOrders);
-		final double leaveTime = serviceTimeForAllOrders + engine.now();
-		engine.schedule(new LeaveEvent(leaveTime, this, order, engine));
+		final double serviceTime = serviceTimeForOrders(numberOfOrders);
+		final double leaveTime = serviceTime + currentTime;
+		engine.schedule(new LeaveEvent(leaveTime, order, engine));
 	}
 
 }

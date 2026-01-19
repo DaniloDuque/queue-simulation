@@ -46,6 +46,9 @@ public class StatisticsCollector {
 		final double[] queueTimes = servedOrders.stream().mapToDouble(Order::getTotalWaitingTimeInQueue).toArray();
 		final double[] serviceTimes = servedOrders.stream().mapToDouble(Order::getTotalWaitingTimeInService)
 				.toArray();
+		final double[] totalTimes = servedOrders.stream()
+				.mapToDouble(order -> order.getTotalWaitingTimeInQueue() + order.getTotalWaitingTimeInService())
+				.toArray();
 
 		final double totalQueueTime = Arrays.stream(queueTimes).sum();
 		final double totalServiceTime = Arrays.stream(serviceTimes).sum();
@@ -54,6 +57,13 @@ public class StatisticsCollector {
 		final double meanQueueTime = totalQueueTime / servedOrders.size();
 		final double meanServiceTime = totalServiceTime / servedOrders.size();
 		final double meanSystemTime = totalSystemTime / servedOrders.size();
+
+		// Calculate variance of total waiting time
+		final double meanTotalTime = Arrays.stream(totalTimes).average().orElse(0.0);
+		final double variance = Arrays.stream(totalTimes)
+				.map(time -> Math.pow(time - meanTotalTime, 2))
+				.average().orElse(0.0);
+		final double stdDev = Math.sqrt(variance);
 
 		Arrays.sort(queueTimes);
 		Arrays.sort(serviceTimes);
@@ -75,18 +85,24 @@ public class StatisticsCollector {
 		log.info("Max service time: {}", String.format("%.2f", maxServiceTime));
 		log.info("--- System Performance ---");
 		log.info("Mean total time: {}", String.format("%.2f", meanSystemTime));
+		log.info("Variance of total time: {}", String.format("%.2f", variance));
+		log.info("Std deviation of total time: {}", String.format("%.2f", stdDev));
 		log.info("System utilization: {}%", String.format("%.1f", utilization));
 
 		log.info("--- Per-Station Statistics ---");
 		for (String station : stationQueueTimes.keySet()) {
-			final double avgQueue = stationQueueTimes.get(station) / stationCounts.get(station);
-			final double avgService = stationServiceTimes.get(station) / stationCounts.get(station);
-			final int throughput = stationCounts.get(station);
+			final Integer count = stationCounts.get(station);
+			if (count == null || count == 0)
+				continue;
+
+			final double avgQueue = stationQueueTimes.get(station) / count;
+			final Double serviceTime = stationServiceTimes.get(station);
+			final double avgService = serviceTime != null ? serviceTime / count : 0.0;
 			final int arrivals = stationArrivals.getOrDefault(station, 0);
 			log.info("{}: Arrivals {}, Queue {}, Service {}, Completed {}", station, arrivals,
 					String.format("%.2f", avgQueue),
 					String.format("%.2f", avgService),
-					throughput);
+					count);
 		}
 	}
 
