@@ -25,6 +25,7 @@ public class ServiceStation {
 	private int busyWorkers;
 
 	public void arrive(@NonNull final Client client, @NonNull final SimulationEngine engine) {
+		statisticsCollector.addStationArrival(name);
 		client.setQueueStartTime(engine.now());
 		if (busyWorkers < workers) {
 			startService(client, engine);

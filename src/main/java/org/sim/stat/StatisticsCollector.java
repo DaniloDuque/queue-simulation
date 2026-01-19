@@ -5,6 +5,7 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.sim.client.Client;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
@@ -15,6 +16,7 @@ public class StatisticsCollector {
 	private final Map<String, Double> stationQueueTimes;
 	private final Map<String, Double> stationServiceTimes;
 	private final Map<String, Integer> stationCounts;
+	private final Map<String, Integer> stationArrivals;
 
 	public void addServedClient(@NonNull final Client client) {
 		servedClients.add(client);
@@ -24,6 +26,11 @@ public class StatisticsCollector {
 		stationQueueTimes.put(stationName, stationQueueTimes.get(stationName) == null ? queueTime
 				: stationQueueTimes.get(stationName) + queueTime);
 		stationCounts.put(stationName, stationCounts.get(stationName) == null ? 1 : stationCounts.get(stationName) + 1);
+	}
+
+	public void addStationArrival(String stationName) {
+		stationArrivals.put(stationName,
+				stationArrivals.get(stationName) == null ? 1 : stationArrivals.get(stationName) + 1);
 	}
 
 	public void addStationServiceTime(String stationName, double serviceTime) {
@@ -36,25 +43,26 @@ public class StatisticsCollector {
 		if (servedClients.isEmpty())
 			return;
 
-		double[] queueTimes = servedClients.stream().mapToDouble(Client::getTotalWaitingTimeInQueue).toArray();
-		double[] serviceTimes = servedClients.stream().mapToDouble(Client::getTotalWaitingTimeInService).toArray();
+		final double[] queueTimes = servedClients.stream().mapToDouble(Client::getTotalWaitingTimeInQueue).toArray();
+		final double[] serviceTimes = servedClients.stream().mapToDouble(Client::getTotalWaitingTimeInService)
+				.toArray();
 
-		double totalQueueTime = java.util.Arrays.stream(queueTimes).sum();
-		double totalServiceTime = java.util.Arrays.stream(serviceTimes).sum();
-		double totalSystemTime = totalQueueTime + totalServiceTime;
+		final double totalQueueTime = Arrays.stream(queueTimes).sum();
+		final double totalServiceTime = Arrays.stream(serviceTimes).sum();
+		final double totalSystemTime = totalQueueTime + totalServiceTime;
 
-		double meanQueueTime = totalQueueTime / servedClients.size();
-		double meanServiceTime = totalServiceTime / servedClients.size();
-		double meanSystemTime = totalSystemTime / servedClients.size();
+		final double meanQueueTime = totalQueueTime / servedClients.size();
+		final double meanServiceTime = totalServiceTime / servedClients.size();
+		final double meanSystemTime = totalSystemTime / servedClients.size();
 
-		java.util.Arrays.sort(queueTimes);
-		java.util.Arrays.sort(serviceTimes);
+		Arrays.sort(queueTimes);
+		Arrays.sort(serviceTimes);
 
-		double medianQueueTime = getMedian(queueTimes);
-		double maxQueueTime = queueTimes[queueTimes.length - 1];
-		double maxServiceTime = serviceTimes[serviceTimes.length - 1];
+		final double medianQueueTime = getMedian(queueTimes);
+		final double maxQueueTime = queueTimes[queueTimes.length - 1];
+		final double maxServiceTime = serviceTimes[serviceTimes.length - 1];
 
-		double utilization = totalServiceTime / (totalServiceTime + totalQueueTime) * 100;
+		final double utilization = totalServiceTime / (totalServiceTime + totalQueueTime) * 100;
 
 		log.info("\n=== SIMULATION STATISTICS ===");
 		log.info("Clients processed: {}", servedClients.size());
@@ -71,10 +79,12 @@ public class StatisticsCollector {
 
 		log.info("--- Per-Station Statistics ---");
 		for (String station : stationQueueTimes.keySet()) {
-			double avgQueue = stationQueueTimes.get(station) / stationCounts.get(station);
-			double avgService = stationServiceTimes.get(station) / stationCounts.get(station);
-			int throughput = stationCounts.get(station);
-			log.info("{}: Queue {}, Service {}, Completed {}", station, String.format("%.2f", avgQueue),
+			final double avgQueue = stationQueueTimes.get(station) / stationCounts.get(station);
+			final double avgService = stationServiceTimes.get(station) / stationCounts.get(station);
+			final int throughput = stationCounts.get(station);
+			final int arrivals = stationArrivals.getOrDefault(station, 0);
+			log.info("{}: Arrivals {}, Queue {}, Service {}, Completed {}", station, arrivals,
+					String.format("%.2f", avgQueue),
 					String.format("%.2f", avgService),
 					throughput);
 		}

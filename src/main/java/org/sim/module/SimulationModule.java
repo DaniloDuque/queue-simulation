@@ -25,7 +25,8 @@ public class SimulationModule extends AbstractModule {
 	@Provides
 	@Singleton
 	StatisticsCollector provideStatisticsCollector() {
-		return new StatisticsCollector(new LinkedList<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
+		return new StatisticsCollector(new LinkedList<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(),
+				new HashMap<>());
 	}
 
 	@Provides
