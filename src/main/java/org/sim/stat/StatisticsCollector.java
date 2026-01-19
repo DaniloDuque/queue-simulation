@@ -22,18 +22,18 @@ public class StatisticsCollector {
 		servedOrders.add(order);
 	}
 
-	public void addStationQueueTime(String stationName, double queueTime) {
+	public void addStationQueueTime(@NonNull final String stationName, final double queueTime) {
 		stationQueueTimes.put(stationName, stationQueueTimes.get(stationName) == null ? queueTime
 				: stationQueueTimes.get(stationName) + queueTime);
 		stationCounts.put(stationName, stationCounts.get(stationName) == null ? 1 : stationCounts.get(stationName) + 1);
 	}
 
-	public void addStationArrival(String stationName) {
+	public void addStationArrival(@NonNull final String stationName) {
 		stationArrivals.put(stationName,
 				stationArrivals.get(stationName) == null ? 1 : stationArrivals.get(stationName) + 1);
 	}
 
-	public void addStationServiceTime(String stationName, double serviceTime) {
+	public void addStationServiceTime(@NonNull final String stationName, final double serviceTime) {
 		stationServiceTimes.put(stationName,
 				stationServiceTimes.get(stationName) == null ? serviceTime
 						: stationServiceTimes.get(stationName) + serviceTime);
@@ -106,7 +106,7 @@ public class StatisticsCollector {
 		}
 	}
 
-	private double getMedian(double[] sortedArray) {
+	private double getMedian(final double[] sortedArray) {
 		int n = sortedArray.length;
 		return n % 2 == 0 ? (sortedArray[n / 2 - 1] + sortedArray[n / 2]) / 2.0 : sortedArray[n / 2];
 	}
