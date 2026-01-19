@@ -3,7 +3,7 @@ package org.sim.stat;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.sim.client.Client;
+import org.sim.order.Order;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -12,14 +12,14 @@ import java.util.Map;
 @Slf4j
 @AllArgsConstructor
 public class StatisticsCollector {
-	private final Collection<Client> servedClients;
+	private final Collection<Order> servedOrders;
 	private final Map<String, Double> stationQueueTimes;
 	private final Map<String, Double> stationServiceTimes;
 	private final Map<String, Integer> stationCounts;
 	private final Map<String, Integer> stationArrivals;
 
-	public void addServedClient(@NonNull final Client client) {
-		servedClients.add(client);
+	public void addServedClient(@NonNull final Order order) {
+		servedOrders.add(order);
 	}
 
 	public void addStationQueueTime(String stationName, double queueTime) {
@@ -40,20 +40,20 @@ public class StatisticsCollector {
 	}
 
 	public void printStats() {
-		if (servedClients.isEmpty())
+		if (servedOrders.isEmpty())
 			return;
 
-		final double[] queueTimes = servedClients.stream().mapToDouble(Client::getTotalWaitingTimeInQueue).toArray();
-		final double[] serviceTimes = servedClients.stream().mapToDouble(Client::getTotalWaitingTimeInService)
+		final double[] queueTimes = servedOrders.stream().mapToDouble(Order::getTotalWaitingTimeInQueue).toArray();
+		final double[] serviceTimes = servedOrders.stream().mapToDouble(Order::getTotalWaitingTimeInService)
 				.toArray();
 
 		final double totalQueueTime = Arrays.stream(queueTimes).sum();
 		final double totalServiceTime = Arrays.stream(serviceTimes).sum();
 		final double totalSystemTime = totalQueueTime + totalServiceTime;
 
-		final double meanQueueTime = totalQueueTime / servedClients.size();
-		final double meanServiceTime = totalServiceTime / servedClients.size();
-		final double meanSystemTime = totalSystemTime / servedClients.size();
+		final double meanQueueTime = totalQueueTime / servedOrders.size();
+		final double meanServiceTime = totalServiceTime / servedOrders.size();
+		final double meanSystemTime = totalSystemTime / servedOrders.size();
 
 		Arrays.sort(queueTimes);
 		Arrays.sort(serviceTimes);
@@ -65,7 +65,7 @@ public class StatisticsCollector {
 		final double utilization = totalServiceTime / (totalServiceTime + totalQueueTime) * 100;
 
 		log.info("\n=== SIMULATION STATISTICS ===");
-		log.info("Clients processed: {}", servedClients.size());
+		log.info("Clients processed: {}", servedOrders.size());
 		log.info("--- Queue Performance ---");
 		log.info("Mean queue time: {}", String.format("%.2f", meanQueueTime));
 		log.info("Median queue time: {}", String.format("%.2f", medianQueueTime));

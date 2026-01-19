@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.sim.distribution.ServiceTimeDistribution;
 import org.sim.engine.SimulationEngine;
 import org.sim.event.LeaveEvent;
-import org.sim.client.Client;
+import org.sim.order.Order;
 import org.sim.stat.StatisticsCollector;
 
 @Slf4j
@@ -19,36 +19,36 @@ public class ServiceStation {
 	private final int workers;
 	private final String name;
 	private final ServiceTimeDistribution dist;
-	private final Queue<Client> queue;
+	private final Queue<Order> queue;
 	private final StatisticsCollector statisticsCollector;
 
 	private int busyWorkers;
 
-	public void arrive(@NonNull final Client client, @NonNull final SimulationEngine engine) {
+	public void arrive(@NonNull final Order order, @NonNull final SimulationEngine engine) {
 		statisticsCollector.addStationArrival(name);
-		client.setQueueStartTime(engine.now());
+		order.setQueueStartTime(engine.now());
 		if (busyWorkers < workers) {
-			startService(client, engine);
+			startService(order, engine);
 		} else {
-			queue.add(client);
+			queue.add(order);
 		}
 	}
 
-	public void leave(@NonNull final Client client, @NonNull final SimulationEngine engine) {
+	public void leave(@NonNull final Order order, @NonNull final SimulationEngine engine) {
 
-		final double serviceTime = engine.now() - client.getServiceStartTime();
-		client.addWaitingTimeInService(serviceTime);
+		final double serviceTime = engine.now() - order.getServiceStartTime();
+		order.addWaitingTimeInService(serviceTime);
 
 		// Track per-station service time
 		statisticsCollector.addStationServiceTime(name, serviceTime);
 
 		// send event to the next station in the sequence
-		final Queue<ServiceStation> clientStationSequence = client.getStationSequence();
+		final Queue<ServiceStation> clientStationSequence = order.getStationSequence();
 		if (!clientStationSequence.isEmpty()) {
 			final ServiceStation nextStation = clientStationSequence.poll();
-			nextStation.arrive(client, engine);
+			nextStation.arrive(order, engine);
 		} else {
-			statisticsCollector.addServedClient(client);
+			statisticsCollector.addServedClient(order);
 		}
 
 		if (queue.isEmpty()) {
@@ -66,20 +66,20 @@ public class ServiceStation {
 		return serviceTime;
 	}
 
-	private void startService(@NonNull final Client client, @NonNull final SimulationEngine engine) {
+	private void startService(@NonNull final Order order, @NonNull final SimulationEngine engine) {
 		// Calculate queue waiting time
-		final double queueTime = engine.now() - client.getQueueStartTime();
-		client.addWaitingTimeInQueue(queueTime);
+		final double queueTime = engine.now() - order.getQueueStartTime();
+		order.addWaitingTimeInQueue(queueTime);
 
 		// Track per-station queue time
 		statisticsCollector.addStationQueueTime(name, queueTime);
 
-		client.setServiceStartTime(engine.now()); // Track service start
+		order.setServiceStartTime(engine.now()); // Track service start
 		busyWorkers++;
-		final int numberOfOrders = client.getOrderSizeForCurrentStation();
+		final int numberOfOrders = order.getOrderSizeForCurrentStation();
 		final double serviceTimeForAllOrders = serviceTimeForOrders(numberOfOrders);
 		final double leaveTime = serviceTimeForAllOrders + engine.now();
-		engine.schedule(new LeaveEvent(leaveTime, this, client, engine));
+		engine.schedule(new LeaveEvent(leaveTime, this, order, engine));
 	}
 
 }

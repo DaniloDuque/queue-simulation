@@ -3,14 +3,14 @@ package org.sim.event;
 import com.google.inject.Inject;
 import lombok.AllArgsConstructor;
 import org.sim.engine.SimulationEngine;
-import org.sim.client.Client;
+import org.sim.order.Order;
 import org.sim.station.ServiceStation;
 
 @AllArgsConstructor(onConstructor_ = @Inject)
 public class ArrivalEvent implements Event {
 
 	private final double arrivalTime;
-	private final Client client;
+	private final Order order;
 	private final ServiceStation station;
 	private final SimulationEngine engine;
 
@@ -21,6 +21,6 @@ public class ArrivalEvent implements Event {
 
 	@Override
 	public void process() {
-		station.arrive(client, engine);
+		station.arrive(order, engine);
 	}
 }

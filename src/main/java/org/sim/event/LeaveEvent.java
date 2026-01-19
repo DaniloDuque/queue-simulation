@@ -2,7 +2,7 @@ package org.sim.event;
 
 import lombok.AllArgsConstructor;
 import org.sim.engine.*;
-import org.sim.client.Client;
+import org.sim.order.Order;
 import org.sim.station.ServiceStation;
 
 @AllArgsConstructor
@@ -10,7 +10,7 @@ public class LeaveEvent implements Event {
 
 	private final double departureTime;
 	private final ServiceStation station;
-	private final Client client;
+	private final Order order;
 	private final SimulationEngine engine;
 
 	@Override
@@ -20,6 +20,6 @@ public class LeaveEvent implements Event {
 
 	@Override
 	public void process() {
-		station.leave(client, engine);
+		station.leave(order, engine);
 	}
 }

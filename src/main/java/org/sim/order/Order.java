@@ -1,4 +1,4 @@
-package org.sim.client;
+package org.sim.order;
 
 import java.util.Queue;
 
@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class Client {
+public class Order {
 	private final long id;
 	private final Queue<ServiceStation> stationSequence;
 

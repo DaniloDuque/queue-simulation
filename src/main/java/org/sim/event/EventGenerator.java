@@ -13,7 +13,7 @@ import org.apache.commons.math3.distribution.ExponentialDistribution;
 import org.sim.engine.SimulationEngine;
 import org.sim.station.StationRouter;
 import org.sim.station.ServiceStation;
-import org.sim.client.Client;
+import org.sim.order.Order;
 
 @Slf4j
 @AllArgsConstructor(onConstructor_ = @Inject)
@@ -42,10 +42,10 @@ public class EventGenerator {
 
 	private Event generateEvent(final int clientId, final double currentTime) {
 		final Queue<ServiceStation> stationSequence = stationRouter.getStationSequence();
-		final Client client = new Client(clientId, stationSequence);
+		final Order order = new Order(clientId, stationSequence);
 		final ServiceStation cashier = stationSequence.poll();
 
-		return new ArrivalEvent(currentTime, client, cashier, simulationEngine);
+		return new ArrivalEvent(currentTime, order, cashier, simulationEngine);
 	}
 
 }
