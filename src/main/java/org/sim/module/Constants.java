@@ -32,6 +32,6 @@ public class Constants {
 
 	// Simulation Parameters
 	public static final int THREAD_POOL_SIZE = 10;
-	public static final int NUMBER_OF_SIMULATIONS_PER_COMBINATION = 10;
+	public static final int NUMBER_OF_SIMULATIONS_PER_COMBINATION = 100;
 	public static final double SIMULATION_TIME_IN_SECONDS = 8.0 * SECONDS_IN_HOUR;
 }
