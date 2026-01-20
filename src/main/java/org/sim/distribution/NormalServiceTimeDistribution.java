@@ -15,6 +15,6 @@ public class NormalServiceTimeDistribution implements ServiceTimeDistribution {
 	// This is floored due to the project requirements (discrete normal)
 	@Override
 	public double sample() {
-		return Math.max(1.0, Math.floor(dist.sample()));
+		return Math.max(0.0, Math.floor(dist.sample()));
 	}
 }

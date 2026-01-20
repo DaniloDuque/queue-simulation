@@ -8,31 +8,31 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.sim.distribution.ServiceTimeDistribution;
 import org.sim.engine.SimulationEngine;
+import org.sim.event.ArrivalEvent;
 import org.sim.event.LeaveEvent;
 import org.sim.model.Order;
-import org.sim.stat.StatisticsCollector;
+import org.sim.model.OrderSizeGenerator;
+import org.sim.stat.SimulationStatistics;
 
 @Slf4j
 @AllArgsConstructor
 public class ServiceStation {
 	private final int workers;
-	private final StationName stationName;
 	private final ServiceTimeDistribution dist;
 	private final Queue<Order> queue;
-	private final StatisticsCollector statisticsCollector;
+	private final SimulationStatistics simulationStatistics;
 
 	private int busyWorkers;
 
 	public ServiceStation(@NonNull final StationSpecification stationSpecification, final int workers) {
 		this.workers = workers;
-		this.stationName = stationSpecification.name();
 		this.dist = stationSpecification.dist();
 		this.queue = stationSpecification.queue();
-		this.statisticsCollector = stationSpecification.statisticsCollector();
+		this.simulationStatistics = stationSpecification.simulationStatistics();
 	}
 
 	public void arrive(@NonNull final Order order, @NonNull final SimulationEngine engine) {
-		order.setQueueStartTime(engine.now());
+		simulationStatistics.openClientOrder(order);
 		if (busyWorkers < workers) {
 			startService(order, engine);
 		} else {
@@ -41,20 +41,19 @@ public class ServiceStation {
 	}
 
 	public void leave(@NonNull final Order order, @NonNull final SimulationEngine engine) {
+		simulationStatistics.closeClientOrder(order);
 
-		final double serviceTime = engine.now() - order.getServiceStartTime();
-		order.addWaitingTimeInService(serviceTime);
-
-		// send event to the next station in the sequence
 		final Collection<StationWorkflow> nextStations = order.getChildStationWorkflows();
 		if (!nextStations.isEmpty()) {
 			for (final StationWorkflow stationWorkflow : nextStations) {
-				final Order newOrder = new Order(order.getId(), stationWorkflow);
-				final ServiceStation nextStation = stationWorkflow.getCurrentStation();
-				nextStation.arrive(newOrder, engine);
+				final Order newOrder = new Order(order.getId(), order.getStartTime(), stationWorkflow);
+				final int orderSize = OrderSizeGenerator.generate();
+				for (int i = 0; i < orderSize; i++) {
+					engine.schedule(new ArrivalEvent(engine.now(), newOrder, engine));
+				}
 			}
 		} else {
-			statisticsCollector.addServedOrder(order);
+			simulationStatistics.addServedOrder(order);
 		}
 
 		if (queue.isEmpty()) {
@@ -64,25 +63,10 @@ public class ServiceStation {
 		}
 	}
 
-	private double serviceTimeForOrders(final int numberOfOrders) {
-		double serviceTime = 0.0;
-		for (int i = 0; i < numberOfOrders; i++) {
-			serviceTime += dist.sample();
-		}
-		return serviceTime;
-	}
-
 	private void startService(@NonNull final Order order, @NonNull final SimulationEngine engine) {
-		final double currentTime = engine.now();
-
-		// Calculate queue waiting time
-		final double queueTime = currentTime - order.getQueueStartTime();
-		order.addWaitingTimeInQueue(queueTime);
-
-		order.setServiceStartTime(currentTime); // Track service start
 		busyWorkers++;
-		final int numberOfOrders = order.getOrderSizeForCurrentStation();
-		final double serviceTime = serviceTimeForOrders(numberOfOrders);
+		final double serviceTime = dist.sample();
+		final double currentTime = engine.now();
 		final double leaveTime = serviceTime + currentTime;
 		engine.schedule(new LeaveEvent(leaveTime, order, engine));
 	}

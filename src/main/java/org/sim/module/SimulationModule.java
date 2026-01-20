@@ -5,17 +5,14 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import lombok.NonNull;
 import org.apache.commons.math3.distribution.ExponentialDistribution;
-import org.sim.assignment.StationRouter;
+import org.sim.assignment.StationWorkflowGenerator;
 import org.sim.distribution.BinomialServiceTimeDistribution;
 import org.sim.distribution.ExponentialServiceTimeDistribution;
 import org.sim.distribution.GeometricServiceTimeDistribution;
 import org.sim.distribution.NormalServiceTimeDistribution;
-import org.sim.engine.EventQueue;
-import org.sim.engine.SimulationClock;
-import org.sim.engine.SimulationEngine;
 import org.sim.event.EventGenerator;
 import org.sim.model.Clients;
-import org.sim.stat.StatisticsCollector;
+import org.sim.stat.SimulationStatistics;
 import org.sim.station.StationName;
 import org.sim.station.StationSpecification;
 import org.sim.tester.CombinationTester;
@@ -34,8 +31,8 @@ public class SimulationModule extends AbstractModule {
 
 	@Provides
 	@Singleton
-	StatisticsCollector provideStatisticsCollector(@NonNull final Clients clients) {
-		return new StatisticsCollector(new LinkedList<>(), clients);
+	SimulationStatistics provideStatisticsCollector(@NonNull final Clients clients) {
+		return new SimulationStatistics(new LinkedList<>(), clients);
 	}
 
 	@Provides
@@ -45,47 +42,28 @@ public class SimulationModule extends AbstractModule {
 	}
 
 	@Provides
-	@Singleton
-	SimulationClock provideSimulationClock() {
-		return new SimulationClock();
-	}
-
-	@Provides
-	@Singleton
-	EventQueue provideEventQueue() {
-		return new EventQueue();
-	}
-
-	@Provides
-	@Singleton
-	SimulationEngine provideSimulationEngine(SimulationClock clock, EventQueue eventQueue) {
-		return new SimulationEngine(clock, eventQueue);
-	}
-
-	@Provides
-	@Singleton
 	EventGenerator provideEventGenerator(ExponentialDistribution arrivalDistribution) {
 		return new EventGenerator(arrivalDistribution);
 	}
 
 	@Provides
 	Map<StationName, StationSpecification> provideStationSpecifications(
-			@NonNull final StatisticsCollector statisticsCollector) {
-		final StationSpecification cashierStationSpecification = new StationSpecification(StationName.CASHIER,
+			@NonNull final SimulationStatistics simulationStatistics) {
+		final StationSpecification cashierStationSpecification = new StationSpecification(
 				new ExponentialServiceTimeDistribution(Constants.CASHIER_STATION_MEAN), new LinkedList<>(),
-				statisticsCollector);
-		final StationSpecification drinksStationSpecification = new StationSpecification(StationName.DRINKS,
+				simulationStatistics);
+		final StationSpecification drinksStationSpecification = new StationSpecification(
 				new ExponentialServiceTimeDistribution(Constants.DRINKS_STATION_MEAN), new LinkedList<>(),
-				statisticsCollector);
-		final StationSpecification frierStationSpecification = new StationSpecification(StationName.FRIER,
+				simulationStatistics);
+		final StationSpecification frierStationSpecification = new StationSpecification(
 				new NormalServiceTimeDistribution(Constants.FRIER_STATION_MEAN, Constants.FRIER_STATION_STD),
-				new LinkedList<>(), statisticsCollector);
-		final StationSpecification desertStationSpecification = new StationSpecification(StationName.DESERT,
+				new LinkedList<>(), simulationStatistics);
+		final StationSpecification desertStationSpecification = new StationSpecification(
 				new BinomialServiceTimeDistribution(Constants.DESERT_STATION_N, Constants.DESERT_STATION_P),
-				new LinkedList<>(), statisticsCollector);
-		final StationSpecification chickenStationSpecification = new StationSpecification(StationName.CHICKEN,
+				new LinkedList<>(), simulationStatistics);
+		final StationSpecification chickenStationSpecification = new StationSpecification(
 				new GeometricServiceTimeDistribution(Constants.CHICKEN_STATION_P), new LinkedList<>(),
-				statisticsCollector);
+				simulationStatistics);
 
 		return Map.of(
 				StationName.CASHIER, cashierStationSpecification,
@@ -97,15 +75,16 @@ public class SimulationModule extends AbstractModule {
 
 	@Provides
 	@Singleton
-	StationRouter provideStationRouter(@NonNull final Map<StationName, StationSpecification> stationSpecifications) {
-		return new StationRouter(Constants.TOTAL_NUMBER_OF_WORKERS, stationSpecifications);
+	StationWorkflowGenerator provideStationWorkflowGenerator(
+			@NonNull final Map<StationName, StationSpecification> stationSpecifications) {
+		return new StationWorkflowGenerator(Constants.TOTAL_NUMBER_OF_WORKERS, stationSpecifications);
 	}
 
 	@Provides
 	@Singleton
 	CombinationTester provideCombinationTester(@NonNull final EventGenerator eventGenerator,
-			@NonNull final SimulationEngine engine, @NonNull final StationRouter stationRouter) {
+			@NonNull final StationWorkflowGenerator stationWorkflowGenerator) {
 		return new CombinationTester(Constants.NUMBER_OF_SIMULATIONS_PER_COMBINATION,
-				Constants.SIMULATION_TIME_IN_SECONDS, eventGenerator, engine, stationRouter);
+				Constants.SIMULATION_TIME_IN_SECONDS, eventGenerator, stationWorkflowGenerator);
 	}
 }

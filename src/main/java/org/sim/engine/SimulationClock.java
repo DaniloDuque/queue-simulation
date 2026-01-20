@@ -1,10 +1,8 @@
 package org.sim.engine;
 
-import com.google.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Singleton
 public class SimulationClock {
 
 	private double currentTime = 0.0;

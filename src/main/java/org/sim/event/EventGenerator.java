@@ -32,15 +32,12 @@ public class EventGenerator {
 		}
 
 		log.info("Generated {} arrival events", eventSequence.size());
-		log.info("Last arrival at time: {}", eventSequence.getLast().time());
-		log.info("Target time: {}", untilTime);
-
 		return eventSequence;
 	}
 
 	private Event generateEvent(final int clientId, final double currentTime,
 			@NonNull final StationWorkflow stationWorkflow, @NonNull final SimulationEngine simulationEngine) {
-		final Order order = new Order(clientId, stationWorkflow);
+		final Order order = new Order(clientId, currentTime, stationWorkflow);
 		return new ArrivalEvent(currentTime, order, simulationEngine);
 	}
 

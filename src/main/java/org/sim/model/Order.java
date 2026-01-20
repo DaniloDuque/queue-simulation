@@ -2,6 +2,7 @@ package org.sim.model;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.sim.station.ServiceStation;
 import org.sim.station.StationWorkflow;
 
@@ -11,14 +12,11 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class Order {
 	private final int id;
+	private final double startTime;
 	private final StationWorkflow stationWorkflow;
 
-	private final double startTime;
-	private final double endTime;
-
-	public int getOrderSizeForCurrentStation() {
-		return OrderSizeGenerator.generate();
-	}
+	@Setter
+	private double endTime;
 
 	public ServiceStation getCurrentStation() {
 		return stationWorkflow.getCurrentStation();

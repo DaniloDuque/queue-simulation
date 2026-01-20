@@ -8,6 +8,8 @@ public interface Event extends Comparable<Event> {
 
 	@Override
 	default int compareTo(final Event other) {
+		if (other == null)
+			return 1;
 		return Double.compare(this.time(), other.time());
 	}
 }

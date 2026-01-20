@@ -3,7 +3,7 @@ package org.sim.module;
 public class Constants {
 
 	public static final double SECONDS_IN_MINUTE = 60;
-	public static final double SECONDS_IN_HOUR = 60 * 60;
+	public static final double SECONDS_IN_HOUR = 60 * SECONDS_IN_MINUTE;
 
 	// routing probabilities
 	public static final double CASHIER_PROB = 1.0;
@@ -20,13 +20,7 @@ public class Constants {
 	public static final String CHICKEN_STATION_NAME = "Chicken";
 
 	// number of workers per station (total must be 12)
-	public static final int NUMBER_OF_CASHIER_WORKERS = 3;
-	public static final int NUMBER_OF_DRINKS_WORKERS = 1;
-	public static final int NUMBER_OF_FRIER_WORKERS = 3;
-	public static final int NUMBER_OF_DESERT_WORKERS = 1;
-	public static final int NUMBER_OF_CHICKEN_WORKERS = 4;
-	public static final int TOTAL_NUMBER_OF_WORKERS = NUMBER_OF_CASHIER_WORKERS + NUMBER_OF_DRINKS_WORKERS
-			+ NUMBER_OF_FRIER_WORKERS + NUMBER_OF_DESERT_WORKERS + NUMBER_OF_CHICKEN_WORKERS;
+	public static final int TOTAL_NUMBER_OF_WORKERS = 12;
 
 	// Station distribution parameters
 	public static final double CASHIER_STATION_MEAN = 2.5 * SECONDS_IN_MINUTE;
@@ -45,7 +39,7 @@ public class Constants {
 	public static final double CLIENT_NUMBER_OF_ORDER_PER_STATION_P = 2.0 / 5.0;
 
 	// Simulation Parameters
-	public static final int THREAD_POOL_SIZE = 10;
-	public static final int NUMBER_OF_SIMULATIONS_PER_COMBINATION = 3;
+	public static final int THREAD_POOL_SIZE = 1;
+	public static final int NUMBER_OF_SIMULATIONS_PER_COMBINATION = 1;
 	public static final double SIMULATION_TIME_IN_SECONDS = 8.0 * SECONDS_IN_HOUR;
 }

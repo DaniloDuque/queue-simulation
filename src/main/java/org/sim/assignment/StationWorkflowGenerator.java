@@ -9,10 +9,10 @@ import org.sim.station.StationName;
 import org.sim.station.StationSpecification;
 import org.sim.station.StationWorkflow;
 
-public class StationRouter implements Iterator<StationWorkflow> {
+public class StationWorkflowGenerator implements Iterator<StationWorkflow> {
 	private final StationAssignmentService stationAssignmentService;
 
-	public StationRouter(final int workers,
+	public StationWorkflowGenerator(final int workers,
 			@NonNull final Map<StationName, StationSpecification> stationSpecifications) {
 		final int CompositionSize = stationSpecifications.size();
 		final CompositionGenerator compositionGenerator = new CompositionGenerator(workers, CompositionSize);

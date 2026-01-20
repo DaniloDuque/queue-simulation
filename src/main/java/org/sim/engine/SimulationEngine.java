@@ -31,6 +31,9 @@ public class SimulationEngine {
 				break;
 			}
 
+			log.info("Processing event {}", currentEvent);
+			log.info("Events in queue: {}", eventQueue.size());
+
 			clock.advanceTo(currentEvent.time());
 			currentEvent.process();
 		}

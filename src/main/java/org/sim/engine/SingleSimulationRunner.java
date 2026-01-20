@@ -9,11 +9,11 @@ import org.sim.station.StationWorkflow;
 public class SingleSimulationRunner extends Thread {
 	private final double simulationTime;
 	private final EventGenerator eventGenerator;
-	private final SimulationEngine engine;
 	private final StationWorkflow stationWorkflow;
 
 	@Override
 	public void run() {
+		final SimulationEngine engine = SimulationEngineFactory.create();
 		eventGenerator.generateEventsUntil(simulationTime, stationWorkflow, engine).forEach(engine::schedule);
 		engine.run(simulationTime);
 	}

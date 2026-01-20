@@ -11,6 +11,7 @@ public class Clients {
 	private Map<Integer, Client> clientMap;
 
 	public void openClientOrder(final int clientId) throws NoSuchElementException {
+		clientMap.putIfAbsent(clientId, new Client(clientId));
 		getClient(clientId).addOpenOrder();
 	}
 
@@ -20,6 +21,10 @@ public class Clients {
 
 	public boolean isClientReady(final int clientId) throws NoSuchElementException {
 		return getClient(clientId).isReady();
+	}
+
+	public int getAmount() {
+		return clientMap.size();
 	}
 
 	private Client getClient(final int clientId) throws NoSuchElementException {
