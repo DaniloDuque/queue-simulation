@@ -32,6 +32,6 @@ public class SimulationRunner {
 	}
 
 	public void showResults() {
-		testResultsAnalyzer.showResults();
+		testResultsAnalyzer.getResults();
 	}
 }

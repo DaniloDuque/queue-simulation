@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 @AllArgsConstructor
-public class StationAssignmentService implements Iterator<Map<StationName, ServiceStation>> {
+public class StationAssignmentService implements Iterator<StationAssignment> {
 	private final CompositionGenerator compositionGenerator;
 	private final Map<StationName, StationSpecification> stationSpecifications;
 
@@ -21,7 +21,7 @@ public class StationAssignmentService implements Iterator<Map<StationName, Servi
 	}
 
 	@Override
-	public Map<StationName, ServiceStation> next() throws NoSuchElementException, IllegalStateException {
+	public StationAssignment next() throws NoSuchElementException, IllegalStateException {
 		if (!hasNext()) {
 			throw new NoSuchElementException();
 		}
@@ -32,15 +32,18 @@ public class StationAssignmentService implements Iterator<Map<StationName, Servi
 		}
 
 		final Map<StationName, ServiceStation> serviceStations = new HashMap<>();
+		final Map<StationName, Integer> workerCounts = new HashMap<>();
 
 		int i = 0;
 		for (final StationName stationName : stationSpecifications.keySet()) {
 			final StationSpecification stationSpecification = stationSpecifications.get(stationName);
-			final ServiceStation serviceStation = new ServiceStation(stationSpecification, composition[i]);
+			final int workers = composition[i];
+			final ServiceStation serviceStation = new ServiceStation(stationSpecification, workers);
 			serviceStations.put(stationName, serviceStation);
+			workerCounts.put(stationName, workers);
 			++i;
 		}
 
-		return serviceStations;
+		return new StationAssignment(serviceStations, workerCounts);
 	}
 }

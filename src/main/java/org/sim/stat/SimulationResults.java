@@ -1,4 +1,4 @@
 package org.sim.stat;
 
-public record SimulationResults(double averageWaitTime) {
+public record SimulationResults(double averageWaitTime, int numberOfServedClients) {
 }

@@ -11,6 +11,7 @@ import org.sim.station.StationWorkflow;
 
 public class StationWorkflowGenerator implements Iterator<StationWorkflow> {
 	private final StationAssignmentService stationAssignmentService;
+	private StationAssignment currentAssignment;
 
 	public StationWorkflowGenerator(final int workers,
 			@NonNull final Map<StationName, StationSpecification> stationSpecifications) {
@@ -29,7 +30,8 @@ public class StationWorkflowGenerator implements Iterator<StationWorkflow> {
 		if (!stationAssignmentService.hasNext()) {
 			throw new NoSuchElementException();
 		}
-		final Map<StationName, ServiceStation> stations = stationAssignmentService.next();
+		currentAssignment = stationAssignmentService.next();
+		final Map<StationName, ServiceStation> stations = currentAssignment.stations();
 
 		final ServiceStation cashier = stations.get(StationName.CASHIER);
 		final ServiceStation drinks = stations.get(StationName.DRINKS);
@@ -61,5 +63,9 @@ public class StationWorkflowGenerator implements Iterator<StationWorkflow> {
 		}
 
 		return new StationWorkflow(cashier, nextStations);
+	}
+
+	public Map<StationName, Integer> getCurrentWorkerConfiguration() {
+		return currentAssignment != null ? currentAssignment.workerCounts() : new HashMap<>();
 	}
 }
