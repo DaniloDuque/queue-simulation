@@ -17,6 +17,8 @@ import org.sim.tester.CombinationTester;
 
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class SimulationModule extends AbstractModule {
 
@@ -64,10 +66,16 @@ public class SimulationModule extends AbstractModule {
 
 	@Provides
 	@Singleton
+	ExecutorService provideExecutorService() {
+		return Executors.newFixedThreadPool(Constants.THREAD_POOL_SIZE);
+	}
+
+	@Provides
+	@Singleton
 	CombinationTester provideCombinationTester(@NonNull final EventGenerator eventGenerator,
-			@NonNull final StationWorkflowGenerator stationWorkflowGenerator) {
-		// final ExecutorService executor = Executors.newSingleThreadExecutor();
+			@NonNull final StationWorkflowGenerator stationWorkflowGenerator,
+			@NonNull final ExecutorService executor) {
 		return new CombinationTester(Constants.NUMBER_OF_SIMULATIONS_PER_COMBINATION,
-				Constants.SIMULATION_TIME_IN_SECONDS, eventGenerator, stationWorkflowGenerator);
+				Constants.SIMULATION_TIME_IN_SECONDS, eventGenerator, stationWorkflowGenerator, executor);
 	}
 }

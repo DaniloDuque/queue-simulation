@@ -7,7 +7,7 @@ import org.sim.stat.SimulationStatistics;
 import org.sim.station.StationWorkflow;
 
 @AllArgsConstructor(onConstructor_ = @Inject)
-public class SingleSimulationRunner {
+public class SingleSimulationRunner implements Runnable {
 	private final double simulationTime;
 	private final EventGenerator eventGenerator;
 	private final StationWorkflow stationWorkflow;

@@ -1,7 +1,6 @@
 package org.sim.module;
 
 public class Constants {
-
 	public static final double SECONDS_IN_MINUTE = 60;
 	public static final double SECONDS_IN_HOUR = 60 * SECONDS_IN_MINUTE;
 
@@ -32,7 +31,7 @@ public class Constants {
 	public static final double CLIENT_NUMBER_OF_ORDER_PER_STATION_P = 2.0 / 5.0;
 
 	// Simulation Parameters
-	public static final int THREAD_POOL_SIZE = 1;
-	public static final int NUMBER_OF_SIMULATIONS_PER_COMBINATION = 1000;
+	public static final int THREAD_POOL_SIZE = 10;
+	public static final int NUMBER_OF_SIMULATIONS_PER_COMBINATION = 10;
 	public static final double SIMULATION_TIME_IN_SECONDS = 8.0 * SECONDS_IN_HOUR;
 }

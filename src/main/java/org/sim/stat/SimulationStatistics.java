@@ -48,6 +48,7 @@ public class SimulationStatistics {
 		final int totalClients = minMaxPerOrderId.size();
 
 		log.info("Total clients: {}", totalClients);
+
 		final double totalWaitTime = minMaxPerOrderId.values().stream()
 				.mapToDouble(pair -> pair.max() - pair.min())
 				.sum();

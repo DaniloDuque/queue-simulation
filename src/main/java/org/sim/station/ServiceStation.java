@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Queue;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.sim.distribution.ServiceTimeDistribution;
@@ -15,6 +16,7 @@ import org.sim.model.OrderSizeGenerator;
 import org.sim.stat.SimulationStatistics;
 
 @Slf4j
+@Getter
 @AllArgsConstructor
 public class ServiceStation {
 	private final int workers;
@@ -29,6 +31,14 @@ public class ServiceStation {
 		this.queue = stationSpecification.queue();
 	}
 
+	public ServiceStation(@NonNull final ServiceTimeDistribution dist, final int workers,
+			@NonNull final Queue<Order> queue) {
+		this.workers = workers;
+		this.dist = dist;
+		this.queue = queue;
+		this.busyWorkers = 0;
+	}
+
 	public void arrive(@NonNull final Order order, @NonNull final SimulationEngine engine,
 			@NonNull final SimulationStatistics simulationStatistics) {
 		simulationStatistics.openClientOrder(order);
@@ -41,8 +51,8 @@ public class ServiceStation {
 
 	public void leave(@NonNull final Order order, @NonNull final SimulationEngine engine,
 			@NonNull final SimulationStatistics simulationStatistics) {
-        simulationStatistics.closeClientOrder(order);
-        order.setEndTime(engine.now());
+		simulationStatistics.closeClientOrder(order);
+		order.setEndTime(engine.now());
 
 		final Collection<StationWorkflow> nextStations = order.getChildStationWorkflows();
 		if (!nextStations.isEmpty()) {
