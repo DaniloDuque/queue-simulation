@@ -1,5 +1,6 @@
 package org.sim.event;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import com.google.inject.Inject;
 import lombok.AllArgsConstructor;
@@ -10,18 +11,16 @@ import java.util.ArrayList;
 import org.apache.commons.math3.distribution.ExponentialDistribution;
 
 import org.sim.engine.SimulationEngine;
-import org.sim.station.StationRouter;
-import org.sim.order.Order;
+import org.sim.model.Order;
 import org.sim.station.StationWorkflow;
 
 @Slf4j
 @AllArgsConstructor(onConstructor_ = @Inject)
 public class EventGenerator {
-	private final StationRouter stationRouter;
 	private final ExponentialDistribution exponentialDistribution;
-	private final SimulationEngine simulationEngine;
 
-	public Collection<Event> generateEventsUntil(final double untilTime) {
+	public Collection<Event> generateEventsUntil(final double untilTime,
+			@NonNull final StationWorkflow stationWorkflow, @NonNull final SimulationEngine engine) {
 		final List<Event> eventSequence = new ArrayList<>();
 		double currentTime = 0;
 		int clientId = 0;
@@ -29,7 +28,7 @@ public class EventGenerator {
 		while (currentTime <= untilTime) {
 			double interArrivalTime = exponentialDistribution.sample();
 			currentTime += interArrivalTime;
-			eventSequence.add(generateEvent(clientId++, currentTime));
+			eventSequence.add(generateEvent(clientId++, currentTime, stationWorkflow, engine));
 		}
 
 		log.info("Generated {} arrival events", eventSequence.size());
@@ -39,10 +38,9 @@ public class EventGenerator {
 		return eventSequence;
 	}
 
-	private Event generateEvent(final int clientId, final double currentTime) {
-		final StationWorkflow stationWorkflow = stationRouter.getStationWorkflow();
+	private Event generateEvent(final int clientId, final double currentTime,
+			@NonNull final StationWorkflow stationWorkflow, @NonNull final SimulationEngine simulationEngine) {
 		final Order order = new Order(clientId, stationWorkflow);
-
 		return new ArrivalEvent(currentTime, order, simulationEngine);
 	}
 

@@ -2,7 +2,7 @@ package org.sim.event;
 
 import lombok.AllArgsConstructor;
 import org.sim.engine.*;
-import org.sim.order.Order;
+import org.sim.model.Order;
 
 @AllArgsConstructor
 public class LeaveEvent implements Event {

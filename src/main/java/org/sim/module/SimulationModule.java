@@ -3,8 +3,9 @@ package org.sim.module;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.google.inject.name.Named;
+import lombok.NonNull;
 import org.apache.commons.math3.distribution.ExponentialDistribution;
+import org.sim.assignment.StationRouter;
 import org.sim.distribution.BinomialServiceTimeDistribution;
 import org.sim.distribution.ExponentialServiceTimeDistribution;
 import org.sim.distribution.GeometricServiceTimeDistribution;
@@ -13,83 +14,34 @@ import org.sim.engine.EventQueue;
 import org.sim.engine.SimulationClock;
 import org.sim.engine.SimulationEngine;
 import org.sim.event.EventGenerator;
+import org.sim.model.Clients;
 import org.sim.stat.StatisticsCollector;
-import org.sim.station.ServiceStation;
-import org.sim.station.StationRouter;
+import org.sim.station.StationName;
+import org.sim.station.StationSpecification;
+import org.sim.tester.CombinationTester;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 public class SimulationModule extends AbstractModule {
 
 	@Provides
 	@Singleton
-	StatisticsCollector provideStatisticsCollector() {
-		return new StatisticsCollector(new LinkedList<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(),
-				new HashMap<>());
+	Clients provideClients() {
+		return new Clients(new HashMap<>());
 	}
 
 	@Provides
 	@Singleton
-	@Named(Constants.CASHIER_STATION_NAME)
-	ServiceStation provideCashier(StatisticsCollector statisticsCollector) {
-		return new ServiceStation(Constants.NUMBER_OF_CASHIER_WORKERS, Constants.CASHIER_STATION_NAME,
-				new ExponentialServiceTimeDistribution(Constants.CASHIER_STATION_MEAN), new LinkedList<>(),
-				statisticsCollector, 0);
-	}
-
-	@Provides
-	@Singleton
-	@Named(Constants.DRINKS_STATION_NAME)
-	ServiceStation provideDrinks(StatisticsCollector statisticsCollector) {
-		return new ServiceStation(Constants.NUMBER_OF_DRINKS_WORKERS, Constants.DRINKS_STATION_NAME,
-				new ExponentialServiceTimeDistribution(Constants.DRINKS_STATION_MEAN), new LinkedList<>(),
-				statisticsCollector, 0);
+	StatisticsCollector provideStatisticsCollector(@NonNull final Clients clients) {
+		return new StatisticsCollector(new LinkedList<>(), clients);
 	}
 
 	@Provides
 	@Singleton
 	ExponentialDistribution provideArrivalDistribution() {
 		return new ExponentialDistribution(1.0 / Constants.CLIENT_ARRIVAL_RATE_PER_SECOND);
-	}
-
-	@Provides
-	@Singleton
-	@Named(Constants.FRIER_STATION_NAME)
-	ServiceStation provideFrier(StatisticsCollector statisticsCollector) {
-		return new ServiceStation(Constants.NUMBER_OF_FRIER_WORKERS, Constants.FRIER_STATION_NAME,
-				new NormalServiceTimeDistribution(Constants.FRIER_STATION_MEAN, Constants.FRIER_STATION_STD),
-				new LinkedList<>(), statisticsCollector,
-				0);
-	}
-
-	@Provides
-	@Singleton
-	@Named(Constants.DESERT_STATION_NAME)
-	ServiceStation provideDesert(StatisticsCollector statisticsCollector) {
-		return new ServiceStation(Constants.NUMBER_OF_DESERT_WORKERS, Constants.DESERT_STATION_NAME,
-				new BinomialServiceTimeDistribution(Constants.DESERT_STATION_N, Constants.DESERT_STATION_P),
-				new LinkedList<>(), statisticsCollector,
-				0);
-	}
-
-	@Provides
-	@Singleton
-	@Named(Constants.CHICKEN_STATION_NAME)
-	ServiceStation provideChicken(StatisticsCollector statisticsCollector) {
-		return new ServiceStation(Constants.NUMBER_OF_CHICKEN_WORKERS, Constants.CHICKEN_STATION_NAME,
-				new GeometricServiceTimeDistribution(Constants.CHICKEN_STATION_P), new LinkedList<>(),
-				statisticsCollector, 0);
-	}
-
-	@Provides
-	@Singleton
-	StationRouter provideStationRouter(@Named(Constants.CASHIER_STATION_NAME) ServiceStation cashier,
-			@Named(Constants.DRINKS_STATION_NAME) ServiceStation drinks,
-			@Named(Constants.FRIER_STATION_NAME) ServiceStation frier,
-			@Named(Constants.DESERT_STATION_NAME) ServiceStation desert,
-			@Named(Constants.CHICKEN_STATION_NAME) ServiceStation chicken) {
-		return new StationRouter(cashier, drinks, frier, desert, chicken);
 	}
 
 	@Provides
@@ -112,8 +64,48 @@ public class SimulationModule extends AbstractModule {
 
 	@Provides
 	@Singleton
-	EventGenerator provideEventGenerator(StationRouter stationRouter, ExponentialDistribution arrivalDistribution,
-			SimulationEngine simulationEngine) {
-		return new EventGenerator(stationRouter, arrivalDistribution, simulationEngine);
+	EventGenerator provideEventGenerator(ExponentialDistribution arrivalDistribution) {
+		return new EventGenerator(arrivalDistribution);
+	}
+
+	@Provides
+	Map<StationName, StationSpecification> provideStationSpecifications(
+			@NonNull final StatisticsCollector statisticsCollector) {
+		final StationSpecification cashierStationSpecification = new StationSpecification(StationName.CASHIER,
+				new ExponentialServiceTimeDistribution(Constants.CASHIER_STATION_MEAN), new LinkedList<>(),
+				statisticsCollector);
+		final StationSpecification drinksStationSpecification = new StationSpecification(StationName.DRINKS,
+				new ExponentialServiceTimeDistribution(Constants.DRINKS_STATION_MEAN), new LinkedList<>(),
+				statisticsCollector);
+		final StationSpecification frierStationSpecification = new StationSpecification(StationName.FRIER,
+				new NormalServiceTimeDistribution(Constants.FRIER_STATION_MEAN, Constants.FRIER_STATION_STD),
+				new LinkedList<>(), statisticsCollector);
+		final StationSpecification desertStationSpecification = new StationSpecification(StationName.DESERT,
+				new BinomialServiceTimeDistribution(Constants.DESERT_STATION_N, Constants.DESERT_STATION_P),
+				new LinkedList<>(), statisticsCollector);
+		final StationSpecification chickenStationSpecification = new StationSpecification(StationName.CHICKEN,
+				new GeometricServiceTimeDistribution(Constants.CHICKEN_STATION_P), new LinkedList<>(),
+				statisticsCollector);
+
+		return Map.of(
+				StationName.CASHIER, cashierStationSpecification,
+				StationName.DRINKS, drinksStationSpecification,
+				StationName.FRIER, frierStationSpecification,
+				StationName.DESERT, desertStationSpecification,
+				StationName.CHICKEN, chickenStationSpecification);
+	}
+
+	@Provides
+	@Singleton
+	StationRouter provideStationRouter(@NonNull final Map<StationName, StationSpecification> stationSpecifications) {
+		return new StationRouter(Constants.TOTAL_NUMBER_OF_WORKERS, stationSpecifications);
+	}
+
+	@Provides
+	@Singleton
+	CombinationTester provideCombinationTester(@NonNull final EventGenerator eventGenerator,
+			@NonNull final SimulationEngine engine, @NonNull final StationRouter stationRouter) {
+		return new CombinationTester(Constants.NUMBER_OF_SIMULATIONS_PER_COMBINATION,
+				Constants.SIMULATION_TIME_IN_SECONDS, eventGenerator, engine, stationRouter);
 	}
 }

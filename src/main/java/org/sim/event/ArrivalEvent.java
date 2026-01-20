@@ -3,7 +3,7 @@ package org.sim.event;
 import com.google.inject.Inject;
 import lombok.AllArgsConstructor;
 import org.sim.engine.SimulationEngine;
-import org.sim.order.Order;
+import org.sim.model.Order;
 
 @AllArgsConstructor(onConstructor_ = @Inject)
 public class ArrivalEvent implements Event {

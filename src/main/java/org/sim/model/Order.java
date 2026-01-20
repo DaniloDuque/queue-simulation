@@ -1,6 +1,4 @@
-package org.sim.order;
-
-import lombok.Setter;
+package org.sim.model;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -12,24 +10,11 @@ import java.util.Collection;
 @Getter
 @RequiredArgsConstructor
 public class Order {
-	private final long id;
+	private final int id;
 	private final StationWorkflow stationWorkflow;
 
-	@Setter
-	private double queueStartTime;
-	private double totalWaitingTimeInQueue = 0.0;
-
-	@Setter
-	private double serviceStartTime;
-	private double totalWaitingTimeInService = 0.0;
-
-	public void addWaitingTimeInQueue(final double waitingTimeInQueue) {
-		totalWaitingTimeInQueue += waitingTimeInQueue;
-	}
-
-	public void addWaitingTimeInService(final double waitingTimeInService) {
-		totalWaitingTimeInService += waitingTimeInService;
-	}
+	private final double startTime;
+	private final double endTime;
 
 	public int getOrderSizeForCurrentStation() {
 		return OrderSizeGenerator.generate();
