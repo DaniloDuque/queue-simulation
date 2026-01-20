@@ -9,7 +9,6 @@ import org.sim.event.Event;
 @Slf4j
 @AllArgsConstructor(onConstructor_ = @Inject)
 public class SimulationEngine {
-
 	private final SimulationClock clock;
 	private final EventQueue eventQueue;
 
@@ -22,8 +21,6 @@ public class SimulationEngine {
 	}
 
 	public void run(final double untilTime) throws IllegalArgumentException {
-		log.info("Simulation started");
-
 		while (true) {
 			final Event currentEvent = eventQueue.nextEvent();
 
@@ -31,14 +28,9 @@ public class SimulationEngine {
 				break;
 			}
 
-			log.info("Processing event {}", currentEvent);
-			log.info("Events in queue: {}", eventQueue.size());
-
 			clock.advanceTo(currentEvent.time());
 			currentEvent.process();
 		}
-
-		log.info("Simulation finished at time {}", clock.now());
 	}
 
 }

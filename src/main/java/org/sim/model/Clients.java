@@ -11,7 +11,7 @@ public class Clients {
 	private Map<Integer, Client> clientMap;
 
 	public void openClientOrder(final int clientId) throws NoSuchElementException {
-		clientMap.putIfAbsent(clientId, new Client(clientId));
+		clientMap.putIfAbsent(clientId, new Client(clientId)); // Already handles existing
 		getClient(clientId).addOpenOrder();
 	}
 

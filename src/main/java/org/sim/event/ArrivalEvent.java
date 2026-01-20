@@ -1,16 +1,16 @@
 package org.sim.event;
 
-import com.google.inject.Inject;
 import lombok.AllArgsConstructor;
 import org.sim.engine.SimulationEngine;
 import org.sim.model.Order;
+import org.sim.stat.SimulationStatistics;
 
-@AllArgsConstructor(onConstructor_ = @Inject)
+@AllArgsConstructor
 public class ArrivalEvent implements Event {
-
 	private final double arrivalTime;
 	private final Order order;
 	private final SimulationEngine engine;
+	private final SimulationStatistics simulationStatistics;
 
 	@Override
 	public double time() {
@@ -19,6 +19,6 @@ public class ArrivalEvent implements Event {
 
 	@Override
 	public void process() {
-		order.getCurrentStation().arrive(order, engine);
+		order.getCurrentStation().arrive(order, engine, simulationStatistics);
 	}
 }

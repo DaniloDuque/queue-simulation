@@ -1,7 +1,6 @@
 package org.sim.module;
 
 public class Constants {
-
 	public static final double SECONDS_IN_MINUTE = 60;
 	public static final double SECONDS_IN_HOUR = 60 * SECONDS_IN_MINUTE;
 
@@ -11,13 +10,6 @@ public class Constants {
 	public static final double FRIER_PROB = 0.7;
 	public static final double DESERT_PROB = 0.25;
 	public static final double CHICKEN_PROB = 0.3;
-
-	// station names
-	public static final String CASHIER_STATION_NAME = "Cashier";
-	public static final String DRINKS_STATION_NAME = "Drinks";
-	public static final String FRIER_STATION_NAME = "Frier";
-	public static final String DESERT_STATION_NAME = "Desert";
-	public static final String CHICKEN_STATION_NAME = "Chicken";
 
 	// number of workers per station (total must be 12)
 	public static final int TOTAL_NUMBER_OF_WORKERS = 12;
@@ -39,7 +31,7 @@ public class Constants {
 	public static final double CLIENT_NUMBER_OF_ORDER_PER_STATION_P = 2.0 / 5.0;
 
 	// Simulation Parameters
-	public static final int THREAD_POOL_SIZE = 1;
-	public static final int NUMBER_OF_SIMULATIONS_PER_COMBINATION = 1;
+	public static final int THREAD_POOL_SIZE = 10;
+	public static final int NUMBER_OF_SIMULATIONS_PER_COMBINATION = 10;
 	public static final double SIMULATION_TIME_IN_SECONDS = 8.0 * SECONDS_IN_HOUR;
 }

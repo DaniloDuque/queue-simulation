@@ -3,32 +3,35 @@ package org.sim.engine;
 import com.google.inject.Inject;
 import lombok.AllArgsConstructor;
 import org.sim.event.EventGenerator;
-import org.sim.module.Constants;
+import org.sim.model.Clients;
+import org.sim.stat.SimulationStatistics;
+import org.sim.stat.TestResultsAnalyzer;
 import org.sim.station.StationWorkflow;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+
+import java.util.HashMap;
+import java.util.LinkedList;
 
 @AllArgsConstructor(onConstructor_ = @Inject)
-public class SimulationRunner extends Thread {
+public class SimulationRunner {
 	private final int numberOfSimulations;
 	private final double simulationTime;
 	private final EventGenerator eventGenerator;
 	private final StationWorkflow stationWorkflow;
+	private final TestResultsAnalyzer testResultsAnalyzer;
 
-	@Override
 	public void run() {
-		final ExecutorService executor = Executors.newFixedThreadPool(Constants.THREAD_POOL_SIZE);
-
 		for (int i = 0; i < numberOfSimulations; i++) {
-			executor.submit(new SingleSimulationRunner(simulationTime, eventGenerator, stationWorkflow));
+			final Clients clients = new Clients(new HashMap<>());
+			final SimulationStatistics simulationStatistics = new SimulationStatistics(new LinkedList<>(), clients);
+			final SimulationEngine engine = SimulationEngineFactory.create();
+			final StationWorkflow freshWorkflow = stationWorkflow.deepCopy();
+			new SingleSimulationRunner(simulationTime, eventGenerator, freshWorkflow, engine, simulationStatistics)
+					.run();
+			testResultsAnalyzer.addResults(simulationStatistics.getSimulationResults());
 		}
+	}
 
-		executor.shutdown();
-		try {
-			executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-		}
+	public void showResults() {
+		testResultsAnalyzer.showResults();
 	}
 }
