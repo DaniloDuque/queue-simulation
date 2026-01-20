@@ -20,7 +20,6 @@ public class ServiceStation {
 	private final int workers;
 	private final ServiceTimeDistribution dist;
 	private final Queue<Order> queue;
-	private final SimulationStatistics simulationStatistics;
 
 	private int busyWorkers;
 
@@ -28,28 +27,30 @@ public class ServiceStation {
 		this.workers = workers;
 		this.dist = stationSpecification.dist();
 		this.queue = stationSpecification.queue();
-		this.simulationStatistics = stationSpecification.simulationStatistics();
 	}
 
-	public void arrive(@NonNull final Order order, @NonNull final SimulationEngine engine) {
+	public void arrive(@NonNull final Order order, @NonNull final SimulationEngine engine,
+			@NonNull final SimulationStatistics simulationStatistics) {
 		simulationStatistics.openClientOrder(order);
 		if (busyWorkers < workers) {
-			startService(order, engine);
+			startService(order, engine, simulationStatistics);
 		} else {
 			queue.add(order);
 		}
 	}
 
-	public void leave(@NonNull final Order order, @NonNull final SimulationEngine engine) {
-		simulationStatistics.closeClientOrder(order);
+	public void leave(@NonNull final Order order, @NonNull final SimulationEngine engine,
+			@NonNull final SimulationStatistics simulationStatistics) {
+        simulationStatistics.closeClientOrder(order);
+        order.setEndTime(engine.now());
 
 		final Collection<StationWorkflow> nextStations = order.getChildStationWorkflows();
 		if (!nextStations.isEmpty()) {
 			for (final StationWorkflow stationWorkflow : nextStations) {
-				final Order newOrder = new Order(order.getId(), order.getStartTime(), stationWorkflow);
 				final int orderSize = OrderSizeGenerator.generate();
 				for (int i = 0; i < orderSize; i++) {
-					engine.schedule(new ArrivalEvent(engine.now(), newOrder, engine));
+					final Order newOrder = new Order(order.getId(), order.getStartTime(), stationWorkflow);
+					engine.schedule(new ArrivalEvent(engine.now(), newOrder, engine, simulationStatistics));
 				}
 			}
 		} else {
@@ -59,16 +60,17 @@ public class ServiceStation {
 		if (queue.isEmpty()) {
 			busyWorkers--;
 		} else {
-			startService(queue.poll(), engine);
+			startService(queue.poll(), engine, simulationStatistics);
 		}
 	}
 
-	private void startService(@NonNull final Order order, @NonNull final SimulationEngine engine) {
+	private void startService(@NonNull final Order order, @NonNull final SimulationEngine engine,
+			@NonNull final SimulationStatistics simulationStatistics) {
 		busyWorkers++;
 		final double serviceTime = dist.sample();
 		final double currentTime = engine.now();
 		final double leaveTime = serviceTime + currentTime;
-		engine.schedule(new LeaveEvent(leaveTime, order, engine));
+		engine.schedule(new LeaveEvent(leaveTime, order, engine, simulationStatistics));
 	}
 
 }

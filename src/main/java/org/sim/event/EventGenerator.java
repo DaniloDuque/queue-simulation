@@ -12,6 +12,7 @@ import org.apache.commons.math3.distribution.ExponentialDistribution;
 
 import org.sim.engine.SimulationEngine;
 import org.sim.model.Order;
+import org.sim.stat.SimulationStatistics;
 import org.sim.station.StationWorkflow;
 
 @Slf4j
@@ -20,7 +21,8 @@ public class EventGenerator {
 	private final ExponentialDistribution exponentialDistribution;
 
 	public Collection<Event> generateEventsUntil(final double untilTime,
-			@NonNull final StationWorkflow stationWorkflow, @NonNull final SimulationEngine engine) {
+			@NonNull final StationWorkflow stationWorkflow, @NonNull final SimulationEngine engine,
+			@NonNull final SimulationStatistics simulationStatistics) {
 		final List<Event> eventSequence = new ArrayList<>();
 		double currentTime = 0;
 		int clientId = 0;
@@ -28,17 +30,17 @@ public class EventGenerator {
 		while (currentTime <= untilTime) {
 			double interArrivalTime = exponentialDistribution.sample();
 			currentTime += interArrivalTime;
-			eventSequence.add(generateEvent(clientId++, currentTime, stationWorkflow, engine));
+			eventSequence.add(generateEvent(clientId++, currentTime, stationWorkflow, engine, simulationStatistics));
 		}
 
-		log.info("Generated {} arrival events", eventSequence.size());
 		return eventSequence;
 	}
 
 	private Event generateEvent(final int clientId, final double currentTime,
-			@NonNull final StationWorkflow stationWorkflow, @NonNull final SimulationEngine simulationEngine) {
+			@NonNull final StationWorkflow stationWorkflow, @NonNull final SimulationEngine simulationEngine,
+			@NonNull final SimulationStatistics simulationStatistics) {
 		final Order order = new Order(clientId, currentTime, stationWorkflow);
-		return new ArrivalEvent(currentTime, order, simulationEngine);
+		return new ArrivalEvent(currentTime, order, simulationEngine, simulationStatistics);
 	}
 
 }

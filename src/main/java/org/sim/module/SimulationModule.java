@@ -11,29 +11,14 @@ import org.sim.distribution.ExponentialServiceTimeDistribution;
 import org.sim.distribution.GeometricServiceTimeDistribution;
 import org.sim.distribution.NormalServiceTimeDistribution;
 import org.sim.event.EventGenerator;
-import org.sim.model.Clients;
-import org.sim.stat.SimulationStatistics;
 import org.sim.station.StationName;
 import org.sim.station.StationSpecification;
 import org.sim.tester.CombinationTester;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
 public class SimulationModule extends AbstractModule {
-
-	@Provides
-	@Singleton
-	Clients provideClients() {
-		return new Clients(new HashMap<>());
-	}
-
-	@Provides
-	@Singleton
-	SimulationStatistics provideStatisticsCollector(@NonNull final Clients clients) {
-		return new SimulationStatistics(new LinkedList<>(), clients);
-	}
 
 	@Provides
 	@Singleton
@@ -42,28 +27,19 @@ public class SimulationModule extends AbstractModule {
 	}
 
 	@Provides
-	EventGenerator provideEventGenerator(ExponentialDistribution arrivalDistribution) {
-		return new EventGenerator(arrivalDistribution);
-	}
-
-	@Provides
-	Map<StationName, StationSpecification> provideStationSpecifications(
-			@NonNull final SimulationStatistics simulationStatistics) {
+	Map<StationName, StationSpecification> provideStationSpecifications() {
 		final StationSpecification cashierStationSpecification = new StationSpecification(
-				new ExponentialServiceTimeDistribution(Constants.CASHIER_STATION_MEAN), new LinkedList<>(),
-				simulationStatistics);
+				new ExponentialServiceTimeDistribution(Constants.CASHIER_STATION_MEAN), new LinkedList<>());
 		final StationSpecification drinksStationSpecification = new StationSpecification(
-				new ExponentialServiceTimeDistribution(Constants.DRINKS_STATION_MEAN), new LinkedList<>(),
-				simulationStatistics);
+				new ExponentialServiceTimeDistribution(Constants.DRINKS_STATION_MEAN), new LinkedList<>());
 		final StationSpecification frierStationSpecification = new StationSpecification(
 				new NormalServiceTimeDistribution(Constants.FRIER_STATION_MEAN, Constants.FRIER_STATION_STD),
-				new LinkedList<>(), simulationStatistics);
+				new LinkedList<>());
 		final StationSpecification desertStationSpecification = new StationSpecification(
 				new BinomialServiceTimeDistribution(Constants.DESERT_STATION_N, Constants.DESERT_STATION_P),
-				new LinkedList<>(), simulationStatistics);
+				new LinkedList<>());
 		final StationSpecification chickenStationSpecification = new StationSpecification(
-				new GeometricServiceTimeDistribution(Constants.CHICKEN_STATION_P), new LinkedList<>(),
-				simulationStatistics);
+				new GeometricServiceTimeDistribution(Constants.CHICKEN_STATION_P), new LinkedList<>());
 
 		return Map.of(
 				StationName.CASHIER, cashierStationSpecification,
@@ -71,6 +47,12 @@ public class SimulationModule extends AbstractModule {
 				StationName.FRIER, frierStationSpecification,
 				StationName.DESERT, desertStationSpecification,
 				StationName.CHICKEN, chickenStationSpecification);
+	}
+
+	@Provides
+	@Singleton
+	EventGenerator provideEventGenerator(@NonNull final ExponentialDistribution arrivalDistribution) {
+		return new EventGenerator(arrivalDistribution);
 	}
 
 	@Provides
@@ -84,6 +66,7 @@ public class SimulationModule extends AbstractModule {
 	@Singleton
 	CombinationTester provideCombinationTester(@NonNull final EventGenerator eventGenerator,
 			@NonNull final StationWorkflowGenerator stationWorkflowGenerator) {
+		// final ExecutorService executor = Executors.newSingleThreadExecutor();
 		return new CombinationTester(Constants.NUMBER_OF_SIMULATIONS_PER_COMBINATION,
 				Constants.SIMULATION_TIME_IN_SECONDS, eventGenerator, stationWorkflowGenerator);
 	}

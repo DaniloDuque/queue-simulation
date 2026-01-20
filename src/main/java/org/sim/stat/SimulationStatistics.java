@@ -47,21 +47,15 @@ public class SimulationStatistics {
 		final Map<Integer, MinMaxPair> minMaxPerOrderId = getMinMaxPerOrderId();
 		final int totalClients = minMaxPerOrderId.size();
 
-		log.info("Total Real Clients in Sim: {}", clients.getAmount());
-		log.info("Total Ready Clients: {}", totalClients);
-
+		log.info("Total clients: {}", totalClients);
 		final double totalWaitTime = minMaxPerOrderId.values().stream()
 				.mapToDouble(pair -> pair.max() - pair.min())
 				.sum();
 
-		// log.info("Total Wait Time: {}", totalWaitTime);
-
 		final double averageWaitTime = totalClients > 0 ? totalWaitTime / totalClients : 0.0;
 
 		log.info("Average wait time: {}", averageWaitTime);
-
 		return new SimulationResults(averageWaitTime);
-
 	}
 
 }
