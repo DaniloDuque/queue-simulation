@@ -32,11 +32,9 @@ public class SimulationStatistics {
 				.filter(order -> clientRecord.isClientReady(order.getId()))
 				.collect(Collectors.toMap(
 						Order::getId,
-						order -> new MinMaxPair(
-								Math.min(order.getStartTime(), order.getEndTime()),
-								Math.max(order.getStartTime(), order.getEndTime())),
+						order -> new MinMaxPair(order.getStartTime(), order.getEndTime()),
 						(existing, replacement) -> new MinMaxPair(
-								Math.min(existing.min(), replacement.min()),
+								existing.min(), // startTime is always the same
 								Math.max(existing.max(), replacement.max()))));
 	}
 
