@@ -3,7 +3,7 @@ package org.sim.stat;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.sim.model.Clients;
+import org.sim.model.ClientRecord;
 import org.sim.model.Order;
 
 import java.util.*;
@@ -13,23 +13,23 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class SimulationStatistics {
 	private final Collection<Order> servedOrders;
-	private final Clients clients;
+	private final ClientRecord clientRecord;
 
 	public void addServedOrder(@NonNull final Order order) {
 		servedOrders.add(order);
 	}
 
 	public void openClientOrder(@NonNull final Order order) {
-		clients.openClientOrder(order.getId());
+		clientRecord.openClientOrder(order.getId());
 	}
 
 	public void closeClientOrder(@NonNull final Order order) {
-		clients.completeClientOrder(order.getId());
+		clientRecord.completeClientOrder(order.getId());
 	}
 
 	private Map<Integer, MinMaxPair> getMinMaxPerOrderId() {
 		return servedOrders.stream()
-				.filter(order -> clients.isClientReady(order.getId()))
+				.filter(order -> clientRecord.isClientReady(order.getId()))
 				.collect(Collectors.toMap(
 						Order::getId,
 						order -> new MinMaxPair(

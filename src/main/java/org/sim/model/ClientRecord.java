@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 @AllArgsConstructor(onConstructor_ = @Inject)
-public class Clients {
+public class ClientRecord {
 	private Map<Integer, Client> clientMap;
 
 	public void openClientOrder(final int clientId) throws NoSuchElementException {

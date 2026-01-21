@@ -3,13 +3,10 @@ package org.sim.engine;
 import com.google.inject.Inject;
 import lombok.AllArgsConstructor;
 import org.sim.event.EventGenerator;
-import org.sim.model.Clients;
 import org.sim.stat.SimulationStatistics;
+import org.sim.stat.SimulationStatisticsFactory;
 import org.sim.stat.TestResultsAnalyzer;
 import org.sim.station.StationWorkflow;
-
-import java.util.HashMap;
-import java.util.LinkedList;
 
 @AllArgsConstructor(onConstructor_ = @Inject)
 public class SimulationRunner {
@@ -21,8 +18,7 @@ public class SimulationRunner {
 
 	public void run() {
 		for (int i = 0; i < numberOfSimulations; i++) {
-			final Clients clients = new Clients(new HashMap<>());
-			final SimulationStatistics simulationStatistics = new SimulationStatistics(new LinkedList<>(), clients);
+			final SimulationStatistics simulationStatistics = SimulationStatisticsFactory.create();
 			final SimulationEngine engine = SimulationEngineFactory.create();
 			final StationWorkflow freshWorkflow = stationWorkflow.deepCopy();
 			new SingleSimulationRunner(simulationTime, eventGenerator, freshWorkflow, engine, simulationStatistics)

@@ -16,10 +16,6 @@ public class EventQueue {
 		return queue.poll();
 	}
 
-	public boolean isEmpty() {
-		return queue.isEmpty();
-	}
-
 	public int size() {
 		return queue.size();
 	}
