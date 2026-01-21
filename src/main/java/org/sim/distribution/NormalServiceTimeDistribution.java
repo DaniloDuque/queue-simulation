@@ -2,6 +2,7 @@ package org.sim.distribution;
 
 import com.google.inject.Inject;
 import org.apache.commons.math3.distribution.NormalDistribution;
+import org.sim.module.Constants;
 
 public class NormalServiceTimeDistribution implements ServiceTimeDistribution {
 
@@ -15,6 +16,6 @@ public class NormalServiceTimeDistribution implements ServiceTimeDistribution {
 	// This is floored due to the project requirements (discrete normal)
 	@Override
 	public double sample() {
-		return Math.max(0.0, Math.floor(dist.sample()));
+		return Math.floor(Math.max(0.0, dist.sample())) * Constants.SECONDS_IN_MINUTE;
 	}
 }

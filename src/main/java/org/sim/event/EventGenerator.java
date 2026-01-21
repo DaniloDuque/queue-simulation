@@ -28,7 +28,7 @@ public class EventGenerator {
 		int clientId = 0;
 
 		while (currentTime <= untilTime) {
-			double interArrivalTime = exponentialDistribution.sample();
+			final double interArrivalTime = exponentialDistribution.sample();
 			currentTime += interArrivalTime;
 			eventSequence.add(generateEvent(clientId++, currentTime, stationWorkflow, engine, simulationStatistics));
 		}

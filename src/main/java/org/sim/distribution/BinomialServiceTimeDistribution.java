@@ -15,7 +15,6 @@ public class BinomialServiceTimeDistribution implements ServiceTimeDistribution 
 
 	@Override
 	public double sample() {
-		// Binomial distribution for desserts: n=5, p=0.6
 		return dist.sample() * Constants.SECONDS_IN_MINUTE;
 	}
 }

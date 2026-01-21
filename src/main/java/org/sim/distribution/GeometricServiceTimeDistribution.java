@@ -15,7 +15,6 @@ public class GeometricServiceTimeDistribution implements ServiceTimeDistribution
 
 	@Override
 	public double sample() {
-		// Geometric distribution for chicken: p=0.1, x is minutes
 		return dist.sample() * Constants.SECONDS_IN_MINUTE;
 	}
 }
