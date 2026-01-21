@@ -1,4 +1,4 @@
-package org.sim.event;
+package org.sim.generator;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +10,10 @@ import java.util.ArrayList;
 
 import org.apache.commons.math3.distribution.ExponentialDistribution;
 
+import org.sim.assignment.StationAssignment;
 import org.sim.engine.SimulationEngine;
+import org.sim.event.ArrivalEvent;
+import org.sim.event.Event;
 import org.sim.model.Order;
 import org.sim.stat.SimulationStatistics;
 import org.sim.station.StationWorkflow;
@@ -21,7 +24,8 @@ public class EventGenerator {
 	private final ExponentialDistribution exponentialDistribution;
 
 	public Collection<Event> generateEventsUntil(final double untilTime,
-			@NonNull final StationWorkflow stationWorkflow, @NonNull final SimulationEngine engine,
+			@NonNull final StationAssignment stationAssignment,
+			@NonNull final SimulationEngine engine,
 			@NonNull final SimulationStatistics simulationStatistics) {
 		final List<Event> eventSequence = new ArrayList<>();
 		double currentTime = 0;
@@ -29,6 +33,7 @@ public class EventGenerator {
 
 		while (currentTime <= untilTime) {
 			final double interArrivalTime = exponentialDistribution.sample();
+			final StationWorkflow stationWorkflow = StationWorkflowGenerator.generate(stationAssignment);
 			currentTime += interArrivalTime;
 			eventSequence.add(generateEvent(clientId++, currentTime, stationWorkflow, engine, simulationStatistics));
 		}

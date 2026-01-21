@@ -1,13 +1,13 @@
 package org.sim.station;
 
+import com.google.common.collect.ImmutableMap;
 import lombok.NonNull;
 import org.sim.module.Constants;
 
-import java.util.Map;
 import java.util.NoSuchElementException;
 
 public class StationProbability {
-	private static final Map<StationName, Double> probabilities = Map.of(
+	private static final ImmutableMap<StationName, Double> probabilities = ImmutableMap.of(
 			StationName.CASHIER, Constants.CASHIER_PROB,
 			StationName.DRINKS, Constants.DRINKS_PROB,
 			StationName.FRIER, Constants.FRIER_PROB,

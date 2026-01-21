@@ -1,12 +1,11 @@
 package org.sim.stat;
 
-import java.util.Map;
-
+import com.google.common.collect.ImmutableMap;
 import lombok.NonNull;
 import org.sim.station.StationName;
 
 public record ConfigurationResult(
-    Map<StationName, Integer> workerConfiguration,
+    ImmutableMap<StationName, Integer> workerConfiguration,
     double averageWaitTime,
     double averageServedClients,
     double minWaitTime,

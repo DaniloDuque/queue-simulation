@@ -1,4 +1,4 @@
-package org.sim.assignment;
+package org.sim.generator;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
