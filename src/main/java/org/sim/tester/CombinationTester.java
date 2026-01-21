@@ -66,6 +66,15 @@ public class CombinationTester {
 			log.info("Min served clients: {}", best.minServedClients());
 			log.info("Max served clients: {}", best.maxServedClients());
 			log.info("Served clients standard deviation: {}", best.servedClientsStdDev());
+
+			// Add utilization metrics
+			final var utilizationRates = org.sim.stat.UtilizationCalculator
+					.calculateUtilizationRates(best.workerConfiguration());
+			final boolean isStable = org.sim.stat.UtilizationCalculator.isSystemStable(best.workerConfiguration());
+
+			log.info("=== UTILIZATION RATES ===");
+			utilizationRates.forEach((station, rate) -> log.info("{}: ρ = {}", station, String.format("%.3f", rate)));
+			log.info("System stable (all ρ < 0.8): {}", isStable);
 		}
 	}
 }
