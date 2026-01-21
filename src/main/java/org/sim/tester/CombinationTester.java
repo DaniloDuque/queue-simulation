@@ -57,6 +57,7 @@ public class CombinationTester {
 		final ConfigurationResult best = results.stream().min(ConfigurationResult::compareTo).orElse(null);
 		if (best != null) {
 			log.info("=== BEST CONFIGURATION ===");
+			log.info("Average served clients: {}", best.averageServedClients());
 			log.info("Configuration: {}", best.workerConfiguration());
 			log.info("Average wait time: {}", best.averageWaitTime());
 			log.info("Min wait time: {}", best.minWaitTime());

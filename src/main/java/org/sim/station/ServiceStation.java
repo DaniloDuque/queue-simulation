@@ -43,6 +43,7 @@ public class ServiceStation {
 			@NonNull final SimulationStatistics simulationStatistics) {
 		simulationStatistics.openClientOrder(order);
 		if (busyWorkers < workers) {
+			busyWorkers++;
 			startService(order, engine, simulationStatistics);
 		} else {
 			queue.add(order);
@@ -77,7 +78,6 @@ public class ServiceStation {
 
 	private void startService(@NonNull final Order order, @NonNull final SimulationEngine engine,
 			@NonNull final SimulationStatistics simulationStatistics) {
-		busyWorkers++;
 		final double serviceTime = dist.sample();
 		final double currentTime = engine.now();
 		final double leaveTime = serviceTime + currentTime;
