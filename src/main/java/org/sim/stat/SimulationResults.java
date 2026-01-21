@@ -1,4 +1,6 @@
 package org.sim.stat;
 
-public record SimulationResults(double averageWaitTime, int numberOfServedClients) {
+import java.util.Collection;
+
+public record SimulationResults(double averageWaitTime, int numberOfServedClients, Collection<Double> waitTimes) {
 }

@@ -45,13 +45,18 @@ public class SimulationStatistics {
 		final Map<Integer, MinMaxPair> minMaxPerOrderId = getMinMaxPerOrderId();
 		final int numberOfServedClients = minMaxPerOrderId.size();
 
-		final double totalWaitTime = minMaxPerOrderId.values().stream()
+		final List<Double> waitTimes = minMaxPerOrderId.values().stream()
 				.mapToDouble(pair -> pair.max() - pair.min())
+				.boxed()
+				.toList();
+
+		final double totalWaitTime = waitTimes.stream()
+				.mapToDouble(Double::doubleValue)
 				.sum();
 
 		final double averageWaitTime = numberOfServedClients > 0 ? totalWaitTime / numberOfServedClients : 0.0;
 
-		return new SimulationResults(averageWaitTime, numberOfServedClients);
+		return new SimulationResults(averageWaitTime, numberOfServedClients, waitTimes);
 	}
 
 }
