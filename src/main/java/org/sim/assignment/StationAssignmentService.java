@@ -1,6 +1,8 @@
 package org.sim.assignment;
 
+import com.google.common.collect.ImmutableMap;
 import lombok.AllArgsConstructor;
+import org.sim.generator.CompositionGenerator;
 import org.sim.station.ServiceStation;
 import org.sim.station.StationName;
 import org.sim.station.StationSpecification;
@@ -13,7 +15,7 @@ import java.util.NoSuchElementException;
 @AllArgsConstructor
 public class StationAssignmentService implements Iterator<StationAssignment> {
 	private final CompositionGenerator compositionGenerator;
-	private final Map<StationName, StationSpecification> stationSpecifications;
+	private final ImmutableMap<StationName, StationSpecification> stationSpecifications;
 
 	@Override
 	public boolean hasNext() {
@@ -36,14 +38,17 @@ public class StationAssignmentService implements Iterator<StationAssignment> {
 
 		int i = 0;
 		for (final StationName stationName : stationSpecifications.keySet()) {
-			final StationSpecification stationSpecification = stationSpecifications.get(stationName);
 			final int workers = composition[i];
+			final StationSpecification stationSpecification = stationSpecifications.get(stationName);
 			final ServiceStation serviceStation = new ServiceStation(stationSpecification, workers);
 			serviceStations.put(stationName, serviceStation);
 			workerCounts.put(stationName, workers);
 			++i;
 		}
 
-		return new StationAssignment(serviceStations, workerCounts);
+		return new StationAssignment(ImmutableMap.copyOf(serviceStations), ImmutableMap.copyOf(workerCounts)); // Make
+																												// the
+																												// maps
+																												// read-only
 	}
 }

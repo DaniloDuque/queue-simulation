@@ -12,7 +12,7 @@ import org.sim.engine.SimulationEngine;
 import org.sim.event.ArrivalEvent;
 import org.sim.event.LeaveEvent;
 import org.sim.model.Order;
-import org.sim.model.OrderSizeGenerator;
+import org.sim.generator.OrderSizeGenerator;
 import org.sim.stat.SimulationStatistics;
 
 @Slf4j
@@ -23,7 +23,7 @@ public class ServiceStation {
 	private final ServiceTimeDistribution dist;
 	private final Queue<Order> queue;
 
-	private int busyWorkers;
+	private int busyWorkers = 0;
 
 	public ServiceStation(@NonNull final StationSpecification stationSpecification, final int workers) {
 		this.workers = workers;
@@ -55,11 +55,9 @@ public class ServiceStation {
 		order.setEndTime(engine.now());
 
 		final Collection<StationWorkflow> nextStations = order.getChildStationWorkflows();
+
 		for (final StationWorkflow stationWorkflow : nextStations) {
-			final int orderSize = OrderSizeGenerator.generate(); // when a client leaves a station, we generate a number
-																	// of orders for each of the next stations, for
-																	// example when the client leaves the cashier, he
-																	// might have 3 orders of chicken, and 2 for drinks
+			final int orderSize = OrderSizeGenerator.generate();
 			for (int i = 0; i < orderSize; i++) {
 				final Order newOrder = new Order(order.getId(), order.getStartTime(), stationWorkflow);
 				engine.schedule(new ArrivalEvent(engine.now(), newOrder, engine, simulationStatistics));

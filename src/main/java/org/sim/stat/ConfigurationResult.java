@@ -1,12 +1,11 @@
 package org.sim.stat;
 
-import java.util.Map;
-
+import com.google.common.collect.ImmutableMap;
 import lombok.NonNull;
 import org.sim.station.StationName;
 
 public record ConfigurationResult(
-    Map<StationName, Integer> workerConfiguration,
+    ImmutableMap<StationName, Integer> workerConfiguration,
     double averageWaitTime,
     double averageServedClients,
     double minWaitTime,
@@ -19,7 +18,6 @@ public record ConfigurationResult(
 
     @Override
     public int compareTo(@NonNull final ConfigurationResult other) {
-//        Higher served clients is better (negate for descending order)
 //        return Double.compare(other.averageServedClients, this.averageServedClients);
 //        final double thisResult = this.averageServedClients / this.averageWaitTime;
 //        final double otherResult = other.averageServedClients / other.averageWaitTime;

@@ -1,20 +1,20 @@
 package org.sim.tester;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.sim.assignment.StationWorkflowGenerator;
+import org.sim.assignment.StationAssignment;
+import org.sim.assignment.StationAssignmentService;
 import org.sim.engine.SimulationRunner;
-import org.sim.event.EventGenerator;
+import org.sim.generator.EventGenerator;
 import org.sim.stat.ConfigurationResult;
 import org.sim.stat.ConfigurationSummary;
 import org.sim.stat.TestResultsAnalyzer;
 import org.sim.station.StationName;
-import org.sim.station.StationWorkflow;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -24,19 +24,19 @@ public class CombinationTester {
 	private final int numberOfSimulations;
 	private final double simulationTime;
 	private final EventGenerator eventGenerator;
-	private final StationWorkflowGenerator stationWorkflowGenerator;
+	private final StationAssignmentService stationAssignmentService;
 	private final ExecutorService executor;
 
 	public void run() {
 		final List<Future<ConfigurationResult>> futures = new ArrayList<>();
 
-		while (stationWorkflowGenerator.hasNext()) {
-			final StationWorkflow stationWorkflow = stationWorkflowGenerator.next();
-			final Map<StationName, Integer> workerConfig = stationWorkflowGenerator.getCurrentWorkerConfiguration();
+		while (stationAssignmentService.hasNext()) {
+			final StationAssignment stationAssignment = stationAssignmentService.next();
+			final ImmutableMap<StationName, Integer> workerConfig = stationAssignment.getWorkerCounts();
 			futures.add(executor.submit(() -> {
 				final TestResultsAnalyzer testResultsAnalyzer = new TestResultsAnalyzer();
 				new SimulationRunner(numberOfSimulations, simulationTime, eventGenerator,
-						stationWorkflow, testResultsAnalyzer).run();
+						stationAssignment, testResultsAnalyzer).run();
 				final ConfigurationSummary summary = testResultsAnalyzer.getResults();
 				return new ConfigurationResult(workerConfig,
 						summary.averageWaitTime(), summary.averageServedClients(),
@@ -58,14 +58,10 @@ public class CombinationTester {
 		if (best != null) {
 			log.info("=== BEST CONFIGURATION ===");
 			log.info("Configuration: {}", best.workerConfiguration());
-			log.info("Average served clients: {}", best.averageServedClients());
 			log.info("Average wait time: {}", best.averageWaitTime());
 			log.info("Min wait time: {}", best.minWaitTime());
 			log.info("Max wait time: {}", best.maxWaitTime());
 			log.info("Wait time standard deviation: {}", best.waitTimeStdDev());
-			log.info("Min served clients: {}", best.minServedClients());
-			log.info("Max served clients: {}", best.maxServedClients());
-			log.info("Served clients standard deviation: {}", best.servedClientsStdDev());
 
 			// Add utilization metrics
 			final var utilizationRates = org.sim.stat.UtilizationCalculator

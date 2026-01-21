@@ -1,4 +1,4 @@
-package org.sim.model;
+package org.sim.generator;
 
 import org.apache.commons.math3.distribution.BinomialDistribution;
 import org.sim.module.Constants;

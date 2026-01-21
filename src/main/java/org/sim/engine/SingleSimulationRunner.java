@@ -1,22 +1,28 @@
 package org.sim.engine;
 
+import java.util.Collection;
+
 import com.google.inject.Inject;
 import lombok.AllArgsConstructor;
-import org.sim.event.EventGenerator;
+import lombok.extern.slf4j.Slf4j;
+import org.sim.assignment.StationAssignment;
+import org.sim.event.Event;
+import org.sim.generator.EventGenerator;
 import org.sim.stat.SimulationStatistics;
-import org.sim.station.StationWorkflow;
 
+@Slf4j
 @AllArgsConstructor(onConstructor_ = @Inject)
 public class SingleSimulationRunner implements Runnable {
 	private final double simulationTime;
 	private final EventGenerator eventGenerator;
-	private final StationWorkflow stationWorkflow;
+	private final StationAssignment stationAssignment;
 	private final SimulationEngine engine;
 	private final SimulationStatistics simulationStatistics;
 
 	public void run() {
-		eventGenerator.generateEventsUntil(simulationTime, stationWorkflow, engine, simulationStatistics)
-				.forEach(engine::schedule);
+		Collection<Event> events = eventGenerator.generateEventsUntil(simulationTime, stationAssignment, engine,
+				simulationStatistics);
+		events.forEach(engine::schedule);
 		engine.run(simulationTime);
 	}
 }
