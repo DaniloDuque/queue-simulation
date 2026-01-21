@@ -55,15 +55,18 @@ public class ServiceStation {
 		order.setEndTime(engine.now());
 
 		final Collection<StationWorkflow> nextStations = order.getChildStationWorkflows();
-		if (!nextStations.isEmpty()) {
-			for (final StationWorkflow stationWorkflow : nextStations) {
-				final int orderSize = OrderSizeGenerator.generate();
-				for (int i = 0; i < orderSize; i++) {
-					final Order newOrder = new Order(order.getId(), order.getStartTime(), stationWorkflow);
-					engine.schedule(new ArrivalEvent(engine.now(), newOrder, engine, simulationStatistics));
-				}
+		for (final StationWorkflow stationWorkflow : nextStations) {
+			final int orderSize = OrderSizeGenerator.generate(); // when a client leaves a station, we generate a number
+																	// of orders for each of the next stations, for
+																	// example when the client leaves the cashier, he
+																	// might have 3 orders of chicken, and 2 for drinks
+			for (int i = 0; i < orderSize; i++) {
+				final Order newOrder = new Order(order.getId(), order.getStartTime(), stationWorkflow);
+				engine.schedule(new ArrivalEvent(engine.now(), newOrder, engine, simulationStatistics));
 			}
-		} else {
+		}
+
+		if (nextStations.isEmpty()) {
 			simulationStatistics.addServedOrder(order);
 		}
 
