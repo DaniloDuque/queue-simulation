@@ -60,8 +60,8 @@ public class SimulationModule extends AbstractModule {
 	@Provides
 	@Singleton
 	ExecutorService provideExecutorService() {
-		int threads = Constants.THREAD_POOL_SIZE;
-		BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>(Constants.THREAD_POOL_SIZE * 3);
+		final int threads = Constants.THREAD_POOL_SIZE;
+		final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>(Constants.THREAD_POOL_SIZE * 3);
 
 		return new ThreadPoolExecutor(
 				threads,

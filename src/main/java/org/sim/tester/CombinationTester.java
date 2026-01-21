@@ -58,14 +58,10 @@ public class CombinationTester {
 		if (best != null) {
 			log.info("=== BEST CONFIGURATION ===");
 			log.info("Configuration: {}", best.workerConfiguration());
-			log.info("Average served clients: {}", best.averageServedClients());
 			log.info("Average wait time: {}", best.averageWaitTime());
 			log.info("Min wait time: {}", best.minWaitTime());
 			log.info("Max wait time: {}", best.maxWaitTime());
 			log.info("Wait time standard deviation: {}", best.waitTimeStdDev());
-			log.info("Min served clients: {}", best.minServedClients());
-			log.info("Max served clients: {}", best.maxServedClients());
-			log.info("Served clients standard deviation: {}", best.servedClientsStdDev());
 
 			// Add utilization metrics
 			final var utilizationRates = org.sim.stat.UtilizationCalculator

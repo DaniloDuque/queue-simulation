@@ -18,7 +18,6 @@ public record ConfigurationResult(
 
     @Override
     public int compareTo(@NonNull final ConfigurationResult other) {
-//        Higher served clients is better (negate for descending order)
 //        return Double.compare(other.averageServedClients, this.averageServedClients);
 //        final double thisResult = this.averageServedClients / this.averageWaitTime;
 //        final double otherResult = other.averageServedClients / other.averageWaitTime;
