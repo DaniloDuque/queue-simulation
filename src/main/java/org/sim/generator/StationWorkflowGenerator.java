@@ -2,11 +2,11 @@ package org.sim.generator;
 
 import com.google.common.collect.ImmutableMap;
 import lombok.NonNull;
-import org.sim.assignment.StationAssignment;
+import org.sim.station.assignment.StationAssignment;
 import org.sim.module.Constants;
-import org.sim.station.ServiceStation;
+import org.sim.station.Station;
 import org.sim.station.StationName;
-import org.sim.station.StationWorkflow;
+import org.sim.station.router.StationWorkflow;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,12 +17,12 @@ public class StationWorkflowGenerator {
 	private static final ThreadLocal<Random> threadLocalRandom = ThreadLocal.withInitial(Random::new);
 
 	public static StationWorkflow generate(@NonNull final StationAssignment stationAssignment) {
-		final ImmutableMap<StationName, ServiceStation> stations = stationAssignment.getStations();
+		final ImmutableMap<StationName, Station> stations = stationAssignment.getStations();
 
-		final ServiceStation cashier = stations.get(StationName.CASHIER);
-		final ServiceStation drinks = stations.get(StationName.DRINKS);
-		final ServiceStation frier = stations.get(StationName.FRIER);
-		final ServiceStation chicken = stations.get(StationName.CHICKEN);
+		final Station cashier = stations.get(StationName.CASHIER);
+		final Station drinks = stations.get(StationName.DRINKS);
+		final Station frier = stations.get(StationName.FRIER);
+		final Station chicken = stations.get(StationName.CHICKEN);
 
 		if (cashier == null || drinks == null || frier == null || chicken == null) {
 			throw new IllegalStateException("Missing station");

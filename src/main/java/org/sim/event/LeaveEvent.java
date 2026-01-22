@@ -3,14 +3,12 @@ package org.sim.event;
 import lombok.AllArgsConstructor;
 import org.sim.engine.*;
 import org.sim.model.order.Order;
-import org.sim.stat.single.SimulationStatistics;
 
 @AllArgsConstructor
 public class LeaveEvent implements Event {
 	private final double departureTime;
 	private final Order order;
-	private final SimulationEngine engine;
-	private final SimulationStatistics simulationStatistics;
+	private final EventScheduler eventScheduler;
 
 	@Override
 	public double time() {
@@ -19,6 +17,6 @@ public class LeaveEvent implements Event {
 
 	@Override
 	public void process() {
-		order.getCurrentStation().leave(order, engine, simulationStatistics);
+		order.getCurrentStation().leave(order, eventScheduler, departureTime);
 	}
 }

@@ -2,43 +2,34 @@ package org.sim.run;
 
 import com.google.inject.Inject;
 import lombok.AllArgsConstructor;
-import org.sim.assignment.StationAssignment;
-import org.sim.engine.SimulationEngine;
-import org.sim.engine.SimulationEngineFactory;
+import org.sim.engine.*;
+import org.sim.station.assignment.StationAssignment;
 import org.sim.generator.EventGenerator;
 import org.sim.stat.single.SimulationStatistics;
 import org.sim.stat.single.SimulationStatisticsFactory;
 import org.sim.stat.multiple.TestResultsAnalyzer;
+import org.sim.station.assignment.StationWorkerAssigner;
+import org.sim.station.assignment.StationConfiguration;
 
 @AllArgsConstructor(onConstructor_ = @Inject)
 public class SimulationRunner {
 	private final int numberOfSimulations;
 	private final double simulationTime;
 	private final EventGenerator eventGenerator;
-	private final StationAssignment stationAssignment;
 	private final TestResultsAnalyzer testResultsAnalyzer;
+	private final StationConfiguration stationConfiguration;
 
 	public void run() {
 		for (int i = 0; i < numberOfSimulations; i++) {
 			final SimulationStatistics simulationStatistics = SimulationStatisticsFactory.create();
-			final SimulationEngine engine = SimulationEngineFactory.create();
-			final StationAssignment stationAssignmentCopy = StationAssignment.copyOf(stationAssignment); // do this to
-																											// prevent
-																											// using
-																											// the same
-																											// stations
-																											// for
-																											// different
-																											// simulation
-																											// runs
-			new SingleSimulationRunner(simulationTime, eventGenerator, stationAssignmentCopy, engine,
-					simulationStatistics)
+			final EventQueue eventQueue = new EventQueue();
+			final EventFifoManager eventProvider = new EventFifoManager(eventQueue);
+			final SimulationEngine engine = SimulationEngineFactory.create(eventProvider);
+			final StationAssignment stationAssignment = StationWorkerAssigner.assignWorkers(stationConfiguration,
+					simulationStatistics);
+			new SingleSimulationRunner(simulationTime, eventGenerator, stationAssignment, eventProvider, engine)
 					.run();
 			testResultsAnalyzer.addResults(simulationStatistics.getSimulationResults());
 		}
-	}
-
-	public void showResults() {
-		testResultsAnalyzer.getResults();
 	}
 }

@@ -1,16 +1,14 @@
 package org.sim.event;
 
 import lombok.AllArgsConstructor;
-import org.sim.engine.SimulationEngine;
+import org.sim.engine.EventScheduler;
 import org.sim.model.order.Order;
-import org.sim.stat.single.SimulationStatistics;
 
 @AllArgsConstructor
 public class ArrivalEvent implements Event {
 	private final double arrivalTime;
 	private final Order order;
-	private final SimulationEngine engine;
-	private final SimulationStatistics simulationStatistics;
+	private final EventScheduler eventScheduler;
 
 	@Override
 	public double time() {
@@ -19,6 +17,6 @@ public class ArrivalEvent implements Event {
 
 	@Override
 	public void process() {
-		order.getCurrentStation().arrive(order, engine, simulationStatistics);
+		order.getCurrentStation().arrive(order, eventScheduler, arrivalTime);
 	}
 }

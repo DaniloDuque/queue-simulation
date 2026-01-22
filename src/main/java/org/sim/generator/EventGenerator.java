@@ -10,13 +10,12 @@ import java.util.ArrayList;
 
 import org.apache.commons.math3.distribution.ExponentialDistribution;
 
-import org.sim.assignment.StationAssignment;
-import org.sim.engine.SimulationEngine;
+import org.sim.station.assignment.StationAssignment;
+import org.sim.engine.EventScheduler;
 import org.sim.event.ArrivalEvent;
 import org.sim.event.Event;
 import org.sim.model.order.Order;
-import org.sim.stat.single.SimulationStatistics;
-import org.sim.station.StationWorkflow;
+import org.sim.station.router.StationWorkflow;
 
 @Slf4j
 @AllArgsConstructor(onConstructor_ = @Inject)
@@ -25,8 +24,7 @@ public class EventGenerator {
 
 	public Collection<Event> generateEventsUntil(final double untilTime,
 			@NonNull final StationAssignment stationAssignment,
-			@NonNull final SimulationEngine engine,
-			@NonNull final SimulationStatistics simulationStatistics) {
+			@NonNull final EventScheduler eventScheduler) {
 		final List<Event> eventSequence = new ArrayList<>();
 		double currentTime = 0;
 		int clientId = 0;
@@ -35,17 +33,16 @@ public class EventGenerator {
 			final double interArrivalTime = exponentialDistribution.sample();
 			final StationWorkflow stationWorkflow = StationWorkflowGenerator.generate(stationAssignment);
 			currentTime += interArrivalTime;
-			eventSequence.add(generateEvent(clientId++, currentTime, stationWorkflow, engine, simulationStatistics));
+			eventSequence.add(generateEvent(clientId++, currentTime, stationWorkflow, eventScheduler));
 		}
 
 		return eventSequence;
 	}
 
 	private Event generateEvent(final int clientId, final double currentTime,
-			@NonNull final StationWorkflow stationWorkflow, @NonNull final SimulationEngine simulationEngine,
-			@NonNull final SimulationStatistics simulationStatistics) {
+			@NonNull final StationWorkflow stationWorkflow, @NonNull final EventScheduler eventScheduler) {
 		final Order order = new Order(clientId, currentTime, stationWorkflow);
-		return new ArrivalEvent(currentTime, order, simulationEngine, simulationStatistics);
+		return new ArrivalEvent(currentTime, order, eventScheduler);
 	}
 
 }

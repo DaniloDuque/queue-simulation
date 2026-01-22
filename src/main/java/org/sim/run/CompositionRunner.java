@@ -4,13 +4,14 @@ import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.sim.assignment.StationAssignment;
-import org.sim.assignment.StationAssignmentService;
+import org.sim.generator.WorkerCountGenerator;
+import org.sim.station.assignment.StationSpecification;
 import org.sim.generator.EventGenerator;
 import org.sim.stat.multiple.ConfigurationResult;
 import org.sim.stat.multiple.ConfigurationSummary;
 import org.sim.stat.multiple.TestResultsAnalyzer;
 import org.sim.station.StationName;
+import org.sim.station.assignment.StationConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,21 +24,23 @@ public class CompositionRunner {
 	private final int numberOfSimulations;
 	private final double simulationTime;
 	private final EventGenerator eventGenerator;
-	private final StationAssignmentService stationAssignmentService;
+	private final WorkerCountGenerator workerCountGenerator;
+	private final ImmutableMap<StationName, StationSpecification> stationSpecifications;
 	private final ExecutorService executor;
 
 	public void run() {
 		final List<Future<ConfigurationResult>> futures = new ArrayList<>();
 
-		while (stationAssignmentService.hasNext()) {
-			final StationAssignment stationAssignment = stationAssignmentService.next();
-			final ImmutableMap<StationName, Integer> workerConfig = stationAssignment.getWorkerCounts();
+		while (workerCountGenerator.hasNext()) {
+			final ImmutableMap<StationName, Integer> workerCountPerStation = workerCountGenerator.next();
+			final StationConfiguration stationConfiguration = new StationConfiguration(workerCountPerStation,
+					stationSpecifications);
 			futures.add(executor.submit(() -> {
 				final TestResultsAnalyzer testResultsAnalyzer = new TestResultsAnalyzer();
 				new SimulationRunner(numberOfSimulations, simulationTime, eventGenerator,
-						stationAssignment, testResultsAnalyzer).run();
+						testResultsAnalyzer, stationConfiguration).run();
 				final ConfigurationSummary summary = testResultsAnalyzer.getResults();
-				return new ConfigurationResult(workerConfig,
+				return new ConfigurationResult(workerCountPerStation,
 						summary.averageWaitTime(), summary.averageServedClients(),
 						summary.minWaitTime(), summary.maxWaitTime(), summary.waitTimeStdDev(),
 						summary.minServedClients(), summary.maxServedClients(), summary.servedClientsStdDev());
@@ -49,7 +52,7 @@ public class CompositionRunner {
 			try {
 				results.add(future.get());
 			} catch (Exception e) {
-                log.error("Error while running simulation", e);
+				log.error("Error while running simulation", e);
 				Thread.currentThread().interrupt();
 			}
 		}

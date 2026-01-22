@@ -1,9 +1,10 @@
 package org.sim.engine;
 
+import lombok.NonNull;
+
 public class SimulationEngineFactory {
-	public static SimulationEngine create() {
+	public static SimulationEngine create(@NonNull final EventProvider eventProvider) {
 		final SimulationClock clock = new SimulationClock();
-		final EventQueue eventQueue = new EventQueue();
-		return new SimulationEngine(clock, eventQueue);
+		return new SimulationEngine(clock, eventProvider);
 	}
 }

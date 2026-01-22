@@ -1,28 +1,17 @@
 package org.sim.engine;
 
-import com.google.inject.Inject;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
 import org.sim.event.Event;
 
-@Slf4j
-@AllArgsConstructor(onConstructor_ = @Inject)
+@AllArgsConstructor
 public class SimulationEngine {
 	private final SimulationClock clock;
-	private final EventQueue eventQueue;
+	private final EventProvider eventProvider;
 
-	public double now() {
-		return clock.now();
-	}
-
-	public void schedule(@NonNull final Event event) {
-		eventQueue.schedule(event);
-	}
-
-	public void run(final double untilTime) throws IllegalArgumentException {
+	public void run(@NonNull final Double untilTime) {
 		while (true) {
-			final Event currentEvent = eventQueue.nextEvent();
+			final Event currentEvent = eventProvider.nextEvent();
 
 			if (currentEvent == null || currentEvent.time() > untilTime) {
 				break;
@@ -32,5 +21,4 @@ public class SimulationEngine {
 			currentEvent.process();
 		}
 	}
-
 }

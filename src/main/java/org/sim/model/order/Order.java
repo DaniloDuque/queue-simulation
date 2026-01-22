@@ -3,8 +3,8 @@ package org.sim.model.order;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.sim.station.ServiceStation;
-import org.sim.station.StationWorkflow;
+import org.sim.station.Station;
+import org.sim.station.router.StationWorkflow;
 
 import java.util.Collection;
 
@@ -18,7 +18,7 @@ public class Order {
 	@Setter
 	private double endTime;
 
-	public ServiceStation getCurrentStation() {
+	public Station getCurrentStation() {
 		return stationWorkflow.getCurrentStation();
 	}
 
