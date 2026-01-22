@@ -1,7 +1,8 @@
-package org.sim.stat;
+package org.sim.stat.multiple;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.sim.stat.single.SimulationResults;
 
 import java.util.concurrent.ConcurrentLinkedDeque;
 

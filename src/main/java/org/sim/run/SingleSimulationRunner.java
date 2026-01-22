@@ -1,4 +1,4 @@
-package org.sim.engine;
+package org.sim.run;
 
 import java.util.Collection;
 
@@ -6,9 +6,10 @@ import com.google.inject.Inject;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.sim.assignment.StationAssignment;
+import org.sim.engine.SimulationEngine;
 import org.sim.event.Event;
 import org.sim.generator.EventGenerator;
-import org.sim.stat.SimulationStatistics;
+import org.sim.stat.single.SimulationStatistics;
 
 @Slf4j
 @AllArgsConstructor(onConstructor_ = @Inject)

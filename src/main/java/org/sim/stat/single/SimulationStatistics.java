@@ -1,10 +1,10 @@
-package org.sim.stat;
+package org.sim.stat.single;
 
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.sim.model.ClientRecord;
-import org.sim.model.Order;
+import org.sim.model.client.ClientRecord;
+import org.sim.model.order.Order;
 
 import java.util.*;
 import java.util.stream.Collectors;

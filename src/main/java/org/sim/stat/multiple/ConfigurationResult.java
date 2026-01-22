@@ -1,4 +1,4 @@
-package org.sim.stat;
+package org.sim.stat.multiple;
 
 import com.google.common.collect.ImmutableMap;
 import lombok.NonNull;

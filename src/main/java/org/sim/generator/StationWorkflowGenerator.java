@@ -22,10 +22,9 @@ public class StationWorkflowGenerator {
 		final ServiceStation cashier = stations.get(StationName.CASHIER);
 		final ServiceStation drinks = stations.get(StationName.DRINKS);
 		final ServiceStation frier = stations.get(StationName.FRIER);
-		final ServiceStation desert = stations.get(StationName.DESERT);
 		final ServiceStation chicken = stations.get(StationName.CHICKEN);
 
-		if (cashier == null || drinks == null || frier == null || desert == null || chicken == null) {
+		if (cashier == null || drinks == null || frier == null || chicken == null) {
 			throw new IllegalStateException("Missing station");
 		}
 
@@ -38,10 +37,6 @@ public class StationWorkflowGenerator {
 		if (threadLocalRandom.get().nextDouble() < Constants.FRIER_PROB) {
 			final StationWorkflow frierStationWorkflow = new StationWorkflow(frier, Collections.emptyList());
 			nextStations.add(frierStationWorkflow);
-		}
-		if (threadLocalRandom.get().nextDouble() < Constants.DESERT_PROB) {
-			final StationWorkflow desertStationWorkflow = new StationWorkflow(desert, Collections.emptyList());
-			nextStations.add(desertStationWorkflow);
 		}
 		if (threadLocalRandom.get().nextDouble() < Constants.CHICKEN_PROB) {
 			final StationWorkflow chickenStationWorkflow = new StationWorkflow(chicken, Collections.emptyList());

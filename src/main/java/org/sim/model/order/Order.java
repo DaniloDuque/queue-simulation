@@ -1,4 +1,4 @@
-package org.sim.model;
+package org.sim.model.order;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

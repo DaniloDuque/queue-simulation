@@ -7,13 +7,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.sim.distribution.ServiceTimeDistribution;
+import org.sim.station.distribution.ServiceTimeDistribution;
 import org.sim.engine.SimulationEngine;
 import org.sim.event.ArrivalEvent;
 import org.sim.event.LeaveEvent;
-import org.sim.model.Order;
+import org.sim.model.order.Order;
 import org.sim.generator.OrderSizeGenerator;
-import org.sim.stat.SimulationStatistics;
+import org.sim.stat.single.SimulationStatistics;
 
 @Slf4j
 @Getter

@@ -7,15 +7,15 @@ import com.google.inject.Singleton;
 import lombok.NonNull;
 import org.apache.commons.math3.distribution.ExponentialDistribution;
 import org.sim.assignment.StationAssignmentService;
-import org.sim.distribution.BinomialServiceTimeDistribution;
-import org.sim.distribution.ExponentialServiceTimeDistribution;
-import org.sim.distribution.GeometricServiceTimeDistribution;
-import org.sim.distribution.NormalServiceTimeDistribution;
+import org.sim.station.distribution.ExponentialServiceTimeDistribution;
+import org.sim.station.distribution.GeometricServiceTimeDistribution;
+import org.sim.station.distribution.NormalServiceTimeDistribution;
 import org.sim.generator.CompositionGenerator;
 import org.sim.generator.EventGenerator;
 import org.sim.station.StationName;
+import org.sim.station.StationPrice;
 import org.sim.station.StationSpecification;
-import org.sim.tester.CombinationTester;
+import org.sim.run.CompositionRunner;
 
 import java.util.LinkedList;
 import java.util.concurrent.*;
@@ -31,9 +31,6 @@ public class SimulationModule extends AbstractModule {
 		final StationSpecification frierStationSpecification = new StationSpecification(
 				new NormalServiceTimeDistribution(Constants.FRIER_STATION_MEAN, Constants.FRIER_STATION_STD),
 				new LinkedList<>());
-		final StationSpecification desertStationSpecification = new StationSpecification(
-				new BinomialServiceTimeDistribution(Constants.DESERT_STATION_N, Constants.DESERT_STATION_P),
-				new LinkedList<>());
 		final StationSpecification chickenStationSpecification = new StationSpecification(
 				new GeometricServiceTimeDistribution(Constants.CHICKEN_STATION_P), new LinkedList<>());
 
@@ -41,7 +38,6 @@ public class SimulationModule extends AbstractModule {
 				StationName.CASHIER, cashierStationSpecification,
 				StationName.DRINKS, drinksStationSpecification,
 				StationName.FRIER, frierStationSpecification,
-				StationName.DESERT, desertStationSpecification,
 				StationName.CHICKEN, chickenStationSpecification);
 	}
 
@@ -87,10 +83,20 @@ public class SimulationModule extends AbstractModule {
 
 	@Provides
 	@Singleton
-	CombinationTester provideCombinationTester(@NonNull final EventGenerator eventGenerator,
+	CompositionRunner provideCompositionRunner(@NonNull final EventGenerator eventGenerator,
 			@NonNull final StationAssignmentService stationAssignmentService,
 			@NonNull final ExecutorService executor) {
-		return new CombinationTester(Constants.NUMBER_OF_SIMULATIONS_PER_COMBINATION,
+		return new CompositionRunner(Constants.NUMBER_OF_SIMULATIONS_PER_COMBINATION,
 				Constants.SIMULATION_TIME_IN_SECONDS, eventGenerator, stationAssignmentService, executor);
 	}
+
+	@Provides
+	@Singleton
+	StationPrice provideStationPrice() {
+		final ImmutableMap<StationName, Double> prices = ImmutableMap.of(StationName.CASHIER,
+				Constants.CASHIER_WORKER_PRICE, StationName.DRINKS, Constants.DRINKS_WORKER_PRICE, StationName.FRIER,
+				Constants.FRIER_WORKER_PRICE, StationName.CHICKEN, Constants.CHICKEN_WORKER_PRICE);
+		return new StationPrice(prices);
+	}
+
 }

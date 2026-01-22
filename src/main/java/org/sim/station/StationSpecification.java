@@ -1,8 +1,8 @@
 package org.sim.station;
 
 import lombok.NonNull;
-import org.sim.distribution.ServiceTimeDistribution;
-import org.sim.model.Order;
+import org.sim.station.distribution.ServiceTimeDistribution;
+import org.sim.model.order.Order;
 
 import java.util.Queue;
 

@@ -1,4 +1,4 @@
-package org.sim.model;
+package org.sim.model.client;
 
 import com.google.inject.Inject;
 import lombok.AllArgsConstructor;

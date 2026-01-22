@@ -1,4 +1,4 @@
-package org.sim.distribution;
+package org.sim.station.distribution;
 
 import com.google.inject.Inject;
 import org.apache.commons.math3.distribution.ExponentialDistribution;

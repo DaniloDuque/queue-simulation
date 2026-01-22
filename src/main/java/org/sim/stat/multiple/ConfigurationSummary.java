@@ -1,4 +1,4 @@
-package org.sim.stat;
+package org.sim.stat.multiple;
 
 public record ConfigurationSummary(
     double averageWaitTime,

@@ -1,4 +1,4 @@
-package org.sim.tester;
+package org.sim.run;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
@@ -6,11 +6,10 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.sim.assignment.StationAssignment;
 import org.sim.assignment.StationAssignmentService;
-import org.sim.engine.SimulationRunner;
 import org.sim.generator.EventGenerator;
-import org.sim.stat.ConfigurationResult;
-import org.sim.stat.ConfigurationSummary;
-import org.sim.stat.TestResultsAnalyzer;
+import org.sim.stat.multiple.ConfigurationResult;
+import org.sim.stat.multiple.ConfigurationSummary;
+import org.sim.stat.multiple.TestResultsAnalyzer;
 import org.sim.station.StationName;
 
 import java.util.ArrayList;
@@ -20,7 +19,7 @@ import java.util.concurrent.Future;
 
 @Slf4j
 @AllArgsConstructor(onConstructor_ = @Inject)
-public class CombinationTester {
+public class CompositionRunner {
 	private final int numberOfSimulations;
 	private final double simulationTime;
 	private final EventGenerator eventGenerator;
@@ -50,6 +49,7 @@ public class CombinationTester {
 			try {
 				results.add(future.get());
 			} catch (Exception e) {
+                log.error("Error while running simulation", e);
 				Thread.currentThread().interrupt();
 			}
 		}

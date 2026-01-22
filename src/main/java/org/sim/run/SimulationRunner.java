@@ -1,12 +1,14 @@
-package org.sim.engine;
+package org.sim.run;
 
 import com.google.inject.Inject;
 import lombok.AllArgsConstructor;
 import org.sim.assignment.StationAssignment;
+import org.sim.engine.SimulationEngine;
+import org.sim.engine.SimulationEngineFactory;
 import org.sim.generator.EventGenerator;
-import org.sim.stat.SimulationStatistics;
-import org.sim.stat.SimulationStatisticsFactory;
-import org.sim.stat.TestResultsAnalyzer;
+import org.sim.stat.single.SimulationStatistics;
+import org.sim.stat.single.SimulationStatisticsFactory;
+import org.sim.stat.multiple.TestResultsAnalyzer;
 
 @AllArgsConstructor(onConstructor_ = @Inject)
 public class SimulationRunner {

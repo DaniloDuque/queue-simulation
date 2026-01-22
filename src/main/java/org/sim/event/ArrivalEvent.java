@@ -2,8 +2,8 @@ package org.sim.event;
 
 import lombok.AllArgsConstructor;
 import org.sim.engine.SimulationEngine;
-import org.sim.model.Order;
-import org.sim.stat.SimulationStatistics;
+import org.sim.model.order.Order;
+import org.sim.stat.single.SimulationStatistics;
 
 @AllArgsConstructor
 public class ArrivalEvent implements Event {

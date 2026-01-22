@@ -14,8 +14,8 @@ import org.sim.assignment.StationAssignment;
 import org.sim.engine.SimulationEngine;
 import org.sim.event.ArrivalEvent;
 import org.sim.event.Event;
-import org.sim.model.Order;
-import org.sim.stat.SimulationStatistics;
+import org.sim.model.order.Order;
+import org.sim.stat.single.SimulationStatistics;
 import org.sim.station.StationWorkflow;
 
 @Slf4j

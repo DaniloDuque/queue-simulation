@@ -1,7 +1,7 @@
-package org.sim.stat;
+package org.sim.stat.single;
 
-import org.sim.model.ClientRecord;
-import org.sim.model.ClientRecordFactory;
+import org.sim.model.client.ClientRecord;
+import org.sim.model.client.ClientRecordFactory;
 
 import java.util.LinkedList;
 

@@ -1,4 +1,4 @@
-package org.sim.stat;
+package org.sim.stat.single;
 
 import java.util.Collection;
 

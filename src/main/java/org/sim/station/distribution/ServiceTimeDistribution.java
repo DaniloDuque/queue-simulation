@@ -1,4 +1,4 @@
-package org.sim.distribution;
+package org.sim.station.distribution;
 
 public interface ServiceTimeDistribution {
 	double sample();
