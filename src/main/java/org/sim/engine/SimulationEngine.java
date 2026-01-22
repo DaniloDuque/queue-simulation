@@ -13,9 +13,8 @@ public class SimulationEngine {
 		while (true) {
 			final Event currentEvent = eventProvider.nextEvent();
 
-			if (currentEvent == null || currentEvent.time() > untilTime) {
+			if (currentEvent == null || currentEvent.time() > untilTime)
 				break;
-			}
 
 			clock.advanceTo(currentEvent.time());
 			currentEvent.process();
