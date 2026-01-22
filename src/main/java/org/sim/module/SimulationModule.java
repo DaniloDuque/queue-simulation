@@ -6,7 +6,8 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import lombok.NonNull;
 import org.apache.commons.math3.distribution.ExponentialDistribution;
-import org.sim.generator.WorkerCountGenerator;
+import org.sim.generator.WorkerCountWithBudgetGenerator;
+import org.sim.optimizer.BudgetOptimizer;
 import org.sim.station.distribution.ExponentialServiceTimeDistribution;
 import org.sim.station.distribution.GeometricServiceTimeDistribution;
 import org.sim.station.distribution.NormalServiceTimeDistribution;
@@ -15,7 +16,7 @@ import org.sim.generator.EventGenerator;
 import org.sim.station.StationName;
 import org.sim.station.StationPrice;
 import org.sim.station.assignment.StationSpecification;
-import org.sim.run.CompositionRunner;
+import org.sim.optimizer.CompositionOptimizer;
 
 import java.util.concurrent.*;
 
@@ -60,8 +61,25 @@ public class SimulationModule extends AbstractModule {
 
 	@Provides
 	@Singleton
-	WorkerCountGenerator provideWorkerCountGenerator(@NonNull final CompositionGenerator compositionGenerator) {
-		return new WorkerCountGenerator(compositionGenerator);
+	StationPrice provideStationPrice() {
+		final ImmutableMap<StationName, Double> prices = ImmutableMap.of(StationName.CASHIER,
+				Constants.CASHIER_WORKER_PRICE, StationName.DRINKS, Constants.DRINKS_WORKER_PRICE, StationName.FRIER,
+				Constants.FRIER_WORKER_PRICE, StationName.CHICKEN, Constants.CHICKEN_WORKER_PRICE);
+		return new StationPrice(prices);
+	}
+
+	@Provides
+	@Singleton
+	BudgetOptimizer provideBudgetOptimizer(@NonNull final StationPrice stationPrice) {
+		return new BudgetOptimizer(stationPrice);
+	}
+
+	@Provides
+	@Singleton
+	WorkerCountWithBudgetGenerator provideWorkerCountGenerator(
+			@NonNull final CompositionGenerator compositionGenerator,
+			@NonNull final BudgetOptimizer budgetOptimizer) {
+		return new WorkerCountWithBudgetGenerator(compositionGenerator, budgetOptimizer, Constants.BUDGET);
 	}
 
 	@Provides
@@ -81,22 +99,14 @@ public class SimulationModule extends AbstractModule {
 
 	@Provides
 	@Singleton
-	CompositionRunner provideCompositionRunner(@NonNull final EventGenerator eventGenerator,
-			@NonNull final WorkerCountGenerator workerCountGenerator,
+	CompositionOptimizer provideCompositionRunner(@NonNull final EventGenerator eventGenerator,
+			@NonNull final WorkerCountWithBudgetGenerator workerCountWithBudgetGenerator,
 			@NonNull final ImmutableMap<StationName, StationSpecification> stationSpecifications,
 			@NonNull final ExecutorService executor) {
-		return new CompositionRunner(Constants.NUMBER_OF_SIMULATIONS_PER_COMBINATION,
-				Constants.SIMULATION_TIME_IN_SECONDS, eventGenerator, workerCountGenerator, stationSpecifications,
+		return new CompositionOptimizer(Constants.NUMBER_OF_SIMULATIONS_PER_COMBINATION,
+				Constants.SIMULATION_TIME_IN_SECONDS, eventGenerator, workerCountWithBudgetGenerator,
+				stationSpecifications,
 				executor);
-	}
-
-	@Provides
-	@Singleton
-	StationPrice provideStationPrice() {
-		final ImmutableMap<StationName, Double> prices = ImmutableMap.of(StationName.CASHIER,
-				Constants.CASHIER_WORKER_PRICE, StationName.DRINKS, Constants.DRINKS_WORKER_PRICE, StationName.FRIER,
-				Constants.FRIER_WORKER_PRICE, StationName.CHICKEN, Constants.CHICKEN_WORKER_PRICE);
-		return new StationPrice(prices);
 	}
 
 }

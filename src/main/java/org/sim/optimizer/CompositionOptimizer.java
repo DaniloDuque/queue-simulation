@@ -1,10 +1,11 @@
-package org.sim.run;
+package org.sim.optimizer;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.sim.generator.WorkerCountGenerator;
+import org.sim.generator.WorkerCountWithBudgetGenerator;
+import org.sim.run.SimulationRunner;
 import org.sim.station.assignment.StationSpecification;
 import org.sim.generator.EventGenerator;
 import org.sim.stat.multiple.ConfigurationResult;
@@ -20,19 +21,19 @@ import java.util.concurrent.Future;
 
 @Slf4j
 @AllArgsConstructor(onConstructor_ = @Inject)
-public class CompositionRunner {
+public class CompositionOptimizer {
 	private final int numberOfSimulations;
 	private final double simulationTime;
 	private final EventGenerator eventGenerator;
-	private final WorkerCountGenerator workerCountGenerator;
+	private final WorkerCountWithBudgetGenerator workerCountWithBudgetGenerator;
 	private final ImmutableMap<StationName, StationSpecification> stationSpecifications;
 	private final ExecutorService executor;
 
 	public void run() {
 		final List<Future<ConfigurationResult>> futures = new ArrayList<>();
 
-		while (workerCountGenerator.hasNext()) {
-			final ImmutableMap<StationName, Integer> workerCountPerStation = workerCountGenerator.next();
+		while (workerCountWithBudgetGenerator.hasNext()) {
+			final ImmutableMap<StationName, Integer> workerCountPerStation = workerCountWithBudgetGenerator.next();
 			final StationConfiguration stationConfiguration = new StationConfiguration(workerCountPerStation,
 					stationSpecifications);
 			futures.add(executor.submit(() -> {

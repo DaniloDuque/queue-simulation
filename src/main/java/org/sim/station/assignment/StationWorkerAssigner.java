@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableMap;
 import lombok.NonNull;
 import org.sim.stat.single.SimulationStatistics;
 import org.sim.station.Station;
-import org.sim.station.StationFactory;
 import org.sim.station.StationName;
 import org.sim.station.queue.StationQueue;
 import org.sim.station.queue.StationQueueFactory;
@@ -24,7 +23,7 @@ public class StationWorkerAssigner {
 			final StationSpecification stationSpecification = stationsSpecifications.get(stationName);
 			final Integer workerCount = workerCountPerStation.getOrDefault(stationName, 0);
 			final StationQueue stationQueue = StationQueueFactory.create(workerCount);
-			final Station station = StationFactory.create(stationSpecification, stationQueue, simulationStatistics);
+			final Station station = new Station(stationSpecification, stationQueue, simulationStatistics);
 			stations.put(stationName, station);
 		}
 
