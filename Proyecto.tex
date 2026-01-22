@@ -1,0 +1,58 @@
+\documentclass{proc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+
+\title{Especificación del Proyecto: Simulación de un Sistema de Colas en un Restaurante de Comida Rápida}
+\author{Curso de Simulación}
+\date{\today}
+\begin{document}
+
+\maketitle
+
+\section*{Introducción}
+El presente proyecto tiene como objetivo simular un sistema de colas en un restaurante de comida rápida. Se pretende analizar el impacto de diferentes configuraciones de equipos y costos en el tiempo de espera de los clientes.
+
+\section*{Datos de Equipos y Costos}
+A continuación, se presenta la lista de equipos necesarios para la simulación, junto con sus costos asociados:
+\begin{itemize}
+    \item Freidora: \$200
+    \item Caja: \$500
+    \item Dispensadora de refrescos: \$750
+    \item Parrilla de pollo: \$100
+\end{itemize}
+
+\section*{Objetivos}
+El proyecto se estructurará en tres fases principales:
+\begin{enumerate}
+    \item Generar datos de cada distribución indicada en la Tarea V y validar estadísticamente que siguen las distribuciones esperadas, utilizando pruebas de $\chi^2$ y Kolmogorov-Smirnov.
+    \item Determinar las tres mejores configuraciones que minimicen el tiempo de espera promedio de los clientes bajo las siguientes restricciones:
+        \begin{enumerate}
+            \item Calcular el costo mínimo necesario para garantizar un tiempo de espera máximo (promedio) de 3 minutos.
+            \item Con un presupuesto de \$2000, identificar la mejor distribución de equipos para minimizar el tiempo de espera promedio.
+            \item Con un presupuesto ampliado a \$3000, analizar cómo cambiaría la distribución de equipos para mejorar el tiempo de espera promedio.
+            \item Evaluar el efecto de reducir el tiempo de servicio en la caja a 2 minutos en el costo total y en el tiempo de espera promedio.
+            \item Ajustar la distribución de equipos si la probabilidad de que un cliente pida pollo aumenta al 50\% para mantener un tiempo de espera máximo de 3 minutos.
+        \end{enumerate}
+    \item Generar gráficas de frecuencias relativas y absolutas que muestren para cada muestra simulada:
+        \begin{enumerate}
+            \item Media
+            \item Mediana
+            \item Varianza
+            \item Moda (redondeada a la parte entera)
+            \item Rango (máximo y mínimo)
+            \item Cuartiles
+            \item Percentiles
+            \item Covarianza para cada par de servidores (freidora-cajas, freidora-pollo, freidora-refrescos, etc.)
+            \item Sensibilidad de cada solución (EXTRA): Evaluar cuánto soportaría la solución ante cambios en la probabilidad de solicitud de un servicio en particular sin necesidad de buscar otra solución.
+        \end{enumerate}
+\end{enumerate}
+
+\section*{Metodología}
+Para llevar a cabo la simulación se utilizarán herramientas de programación y análisis estadístico. Se generarán los datos necesarios y se validará su adherencia a las distribuciones esperadas. Posteriormente, se realizarán análisis de sensibilidad y optimización de costos.
+
+\section*{Resultados Esperados}
+Se espera obtener configuraciones de equipos que no solo minimicen el tiempo de espera promedio, sino que también se alineen con los costos establecidos. Además, las gráficas generadas proporcionarán una visualización clara de las métricas de desempeño del sistema.
+
+\end{document}
