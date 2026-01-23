@@ -17,6 +17,7 @@ import org.sim.station.StationName;
 import org.sim.station.StationPrice;
 import org.sim.station.assignment.StationSpecification;
 import org.sim.optimizer.CompositionOptimizer;
+import org.sim.optimizer.budget.BudgetOptimizer;
 
 import java.util.concurrent.*;
 
@@ -98,6 +99,17 @@ public class SimulationModule extends AbstractModule {
 			@NonNull final ExecutorService executor, @NonNull final StationPrice stationPrice) {
 		return new TimeOptimizer(Constants.NUMBER_OF_SIMULATIONS_PER_COMBINATION, Constants.SIMULATION_TIME_IN_SECONDS,
 				eventGenerator, workerCountGenerator, stationSpecifications, executor, stationPrice);
+	}
+
+	@Provides
+	@Singleton
+	BudgetOptimizer provideBudgetOptimizer(@NonNull final EventGenerator eventGenerator,
+			@NonNull final WorkerCountGenerator workerCountGenerator,
+			@NonNull final ImmutableMap<StationName, StationSpecification> stationSpecifications,
+			@NonNull final ExecutorService executor, @NonNull final TimeOptimizer timeOptimizer) {
+		return new BudgetOptimizer(Constants.NUMBER_OF_SIMULATIONS_PER_COMBINATION,
+				Constants.SIMULATION_TIME_IN_SECONDS,
+				eventGenerator, workerCountGenerator, stationSpecifications, executor, timeOptimizer);
 	}
 
 	@Provides
