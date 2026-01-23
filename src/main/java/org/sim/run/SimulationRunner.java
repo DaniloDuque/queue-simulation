@@ -2,6 +2,7 @@ package org.sim.run;
 
 import com.google.inject.Inject;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.sim.engine.*;
 import org.sim.station.assignment.StationAssignment;
 import org.sim.generator.EventGenerator;
@@ -13,13 +14,12 @@ import org.sim.station.assignment.StationConfiguration;
 
 @AllArgsConstructor(onConstructor_ = @Inject)
 public class SimulationRunner {
-	private final int numberOfSimulations;
-	private final double simulationTime;
-	private final EventGenerator eventGenerator;
-	private final StationConfiguration stationConfiguration;
+	public static TestResultsRecord run(@NonNull final Integer numberOfSimulations,
+			@NonNull final Double simulationTime, @NonNull final EventGenerator eventGenerator,
+			@NonNull final StationConfiguration stationConfiguration) {
 
-	public TestResultsRecord run() {
 		final TestResultsRecord testResultsRecord = new TestResultsRecord(stationConfiguration);
+
 		for (int i = 0; i < numberOfSimulations; i++) {
 			final SimulationStatistics simulationStatistics = SimulationStatisticsFactory.create();
 			final EventQueue eventQueue = new EventQueue();
@@ -27,8 +27,8 @@ public class SimulationRunner {
 			final SimulationEngine engine = SimulationEngineFactory.create(eventProvider);
 			final StationAssignment stationAssignment = StationWorkerAssigner.assignWorkers(stationConfiguration,
 					simulationStatistics);
-			new SingleSimulationRunner(simulationTime, eventGenerator, stationAssignment, eventProvider, engine)
-					.run();
+
+			SingleSimulationRunner.run(simulationTime, eventGenerator, stationAssignment, eventProvider, engine);
 			testResultsRecord.addResults(simulationStatistics.getSimulationResults());
 		}
 		return testResultsRecord;

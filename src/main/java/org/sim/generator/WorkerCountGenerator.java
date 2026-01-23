@@ -3,7 +3,6 @@ package org.sim.generator;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import lombok.AllArgsConstructor;
-import org.sim.optimizer.BudgetOptimizer;
 import org.sim.station.StationName;
 
 import java.util.HashMap;
@@ -12,10 +11,8 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 @AllArgsConstructor(onConstructor_ = @Inject)
-public class WorkerCountWithBudgetGenerator implements Iterator<ImmutableMap<StationName, Integer>> {
+public class WorkerCountGenerator implements Iterator<ImmutableMap<StationName, Integer>> {
 	private final CompositionGenerator compositionGenerator;
-	private final BudgetOptimizer budgetOptimizer;
-	private final Double budget;
 
 	@Override
 	public boolean hasNext() {
@@ -34,14 +31,6 @@ public class WorkerCountWithBudgetGenerator implements Iterator<ImmutableMap<Sta
 		for (final StationName stationName : StationName.values()) {
 			workerCountPerStation.put(stationName, composition[i++]);
 		}
-		final ImmutableMap<StationName, Integer> result = ImmutableMap.copyOf(workerCountPerStation);
-		if (budgetOptimizer.calculateTotalCost(result) <= budget)
-			return result;
-
-		if (!compositionGenerator.hasNext())
-			throw new NoSuchElementException();
-
-		return next();
-
+		return ImmutableMap.copyOf(workerCountPerStation);
 	}
 }

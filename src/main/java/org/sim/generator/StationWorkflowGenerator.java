@@ -21,7 +21,7 @@ public class StationWorkflowGenerator {
 
 		final Station cashier = stations.get(StationName.CASHIER);
 		final Station drinks = stations.get(StationName.DRINKS);
-		final Station frier = stations.get(StationName.FRIER);
+		final Station frier = stations.get(StationName.FRYER);
 		final Station chicken = stations.get(StationName.CHICKEN);
 
 		if (cashier == null || drinks == null || frier == null || chicken == null) {
@@ -34,7 +34,7 @@ public class StationWorkflowGenerator {
 			final StationWorkflow drinksStationWorkflow = new StationWorkflow(drinks, Collections.emptyList());
 			nextStations.add(drinksStationWorkflow);
 		}
-		if (threadLocalRandom.get().nextDouble() < Constants.FRIER_PROB) {
+		if (threadLocalRandom.get().nextDouble() < Constants.FRYER_PROB) {
 			final StationWorkflow frierStationWorkflow = new StationWorkflow(frier, Collections.emptyList());
 			nextStations.add(frierStationWorkflow);
 		}

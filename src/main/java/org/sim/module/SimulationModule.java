@@ -6,8 +6,8 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import lombok.NonNull;
 import org.apache.commons.math3.distribution.ExponentialDistribution;
-import org.sim.generator.WorkerCountWithBudgetGenerator;
-import org.sim.optimizer.BudgetOptimizer;
+import org.sim.generator.WorkerCountGenerator;
+import org.sim.optimizer.time.TimeOptimizer;
 import org.sim.station.distribution.ExponentialServiceTimeDistribution;
 import org.sim.station.distribution.GeometricServiceTimeDistribution;
 import org.sim.station.distribution.NormalServiceTimeDistribution;
@@ -29,14 +29,14 @@ public class SimulationModule extends AbstractModule {
 		final StationSpecification drinksStationSpecification = new StationSpecification(
 				new ExponentialServiceTimeDistribution(Constants.DRINKS_STATION_MEAN));
 		final StationSpecification frierStationSpecification = new StationSpecification(
-				new NormalServiceTimeDistribution(Constants.FRIER_STATION_MEAN, Constants.FRIER_STATION_STD));
+				new NormalServiceTimeDistribution(Constants.FRYER_STATION_MEAN, Constants.FRYER_STATION_STD));
 		final StationSpecification chickenStationSpecification = new StationSpecification(
 				new GeometricServiceTimeDistribution(Constants.CHICKEN_STATION_P));
 
 		return ImmutableMap.of(
 				StationName.CASHIER, cashierStationSpecification,
 				StationName.DRINKS, drinksStationSpecification,
-				StationName.FRIER, frierStationSpecification,
+				StationName.FRYER, frierStationSpecification,
 				StationName.CHICKEN, chickenStationSpecification);
 	}
 
@@ -63,23 +63,16 @@ public class SimulationModule extends AbstractModule {
 	@Singleton
 	StationPrice provideStationPrice() {
 		final ImmutableMap<StationName, Double> prices = ImmutableMap.of(StationName.CASHIER,
-				Constants.CASHIER_WORKER_PRICE, StationName.DRINKS, Constants.DRINKS_WORKER_PRICE, StationName.FRIER,
-				Constants.FRIER_WORKER_PRICE, StationName.CHICKEN, Constants.CHICKEN_WORKER_PRICE);
+				Constants.CASHIER_WORKER_PRICE, StationName.DRINKS, Constants.DRINKS_WORKER_PRICE, StationName.FRYER,
+				Constants.FRYER_WORKER_PRICE, StationName.CHICKEN, Constants.CHICKEN_WORKER_PRICE);
 		return new StationPrice(prices);
 	}
 
 	@Provides
 	@Singleton
-	BudgetOptimizer provideBudgetOptimizer(@NonNull final StationPrice stationPrice) {
-		return new BudgetOptimizer(stationPrice);
-	}
-
-	@Provides
-	@Singleton
-	WorkerCountWithBudgetGenerator provideWorkerCountGenerator(
-			@NonNull final CompositionGenerator compositionGenerator,
-			@NonNull final BudgetOptimizer budgetOptimizer) {
-		return new WorkerCountWithBudgetGenerator(compositionGenerator, budgetOptimizer, Constants.BUDGET);
+	WorkerCountGenerator provideWorkerCountGenerator(
+			@NonNull final CompositionGenerator compositionGenerator) {
+		return new WorkerCountGenerator(compositionGenerator);
 	}
 
 	@Provides
@@ -99,12 +92,22 @@ public class SimulationModule extends AbstractModule {
 
 	@Provides
 	@Singleton
+	TimeOptimizer provideTimeOptimizer(@NonNull final EventGenerator eventGenerator,
+			@NonNull final WorkerCountGenerator workerCountGenerator,
+			@NonNull final ImmutableMap<StationName, StationSpecification> stationSpecifications,
+			@NonNull final ExecutorService executor, @NonNull final StationPrice stationPrice) {
+		return new TimeOptimizer(Constants.NUMBER_OF_SIMULATIONS_PER_COMBINATION, Constants.SIMULATION_TIME_IN_SECONDS,
+				eventGenerator, workerCountGenerator, stationSpecifications, executor, stationPrice);
+	}
+
+	@Provides
+	@Singleton
 	CompositionOptimizer provideCompositionRunner(@NonNull final EventGenerator eventGenerator,
-			@NonNull final WorkerCountWithBudgetGenerator workerCountWithBudgetGenerator,
+			@NonNull final WorkerCountGenerator workerCountGenerator,
 			@NonNull final ImmutableMap<StationName, StationSpecification> stationSpecifications,
 			@NonNull final ExecutorService executor) {
 		return new CompositionOptimizer(Constants.NUMBER_OF_SIMULATIONS_PER_COMBINATION,
-				Constants.SIMULATION_TIME_IN_SECONDS, eventGenerator, workerCountWithBudgetGenerator,
+				Constants.SIMULATION_TIME_IN_SECONDS, eventGenerator, workerCountGenerator,
 				stationSpecifications,
 				executor);
 	}

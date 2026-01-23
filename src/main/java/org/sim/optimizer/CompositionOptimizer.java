@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.sim.generator.WorkerCountWithBudgetGenerator;
+import org.sim.generator.WorkerCountGenerator;
 import org.sim.run.SimulationRunner;
 import org.sim.station.assignment.StationSpecification;
 import org.sim.generator.EventGenerator;
@@ -24,21 +24,21 @@ public class CompositionOptimizer {
 	private final int numberOfSimulations;
 	private final double simulationTime;
 	private final EventGenerator eventGenerator;
-	private final WorkerCountWithBudgetGenerator workerCountWithBudgetGenerator;
+	private final WorkerCountGenerator workerCountGenerator;
 	private final ImmutableMap<StationName, StationSpecification> stationSpecifications;
 	private final ExecutorService executor;
 
 	public void run() {
 		final List<Future<TestResult>> futures = new ArrayList<>();
 
-		while (workerCountWithBudgetGenerator.hasNext()) {
-			final ImmutableMap<StationName, Integer> workerCountPerStation = workerCountWithBudgetGenerator.next();
+		while (workerCountGenerator.hasNext()) {
+			final ImmutableMap<StationName, Integer> workerCountPerStation = workerCountGenerator.next();
 			final StationConfiguration stationConfiguration = new StationConfiguration(workerCountPerStation,
 					stationSpecifications);
 			futures.add(executor.submit(() -> {
-				final TestResultsRecord testResultsRecord = new SimulationRunner(numberOfSimulations,
+				final TestResultsRecord testResultsRecord = SimulationRunner.run(numberOfSimulations,
 						simulationTime, eventGenerator,
-						stationConfiguration).run();
+						stationConfiguration);
 				return testResultsRecord.getResults();
 			}));
 		}
