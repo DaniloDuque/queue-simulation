@@ -1,5 +1,6 @@
 package org.sim.engine;
 
+import lombok.NonNull;
 import org.sim.event.Event;
 
 import java.util.PriorityQueue;
@@ -8,7 +9,7 @@ public class EventQueue {
 
 	private final PriorityQueue<Event> queue = new PriorityQueue<>();
 
-	public void schedule(Event event) {
+	public void schedule(@NonNull final Event event) {
 		queue.add(event);
 	}
 

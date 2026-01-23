@@ -7,7 +7,7 @@ import org.sim.station.assignment.StationAssignment;
 import org.sim.generator.EventGenerator;
 import org.sim.stat.single.SimulationStatistics;
 import org.sim.stat.single.SimulationStatisticsFactory;
-import org.sim.stat.multiple.TestResultsAnalyzer;
+import org.sim.stat.multiple.TestResultsRecord;
 import org.sim.station.assignment.StationWorkerAssigner;
 import org.sim.station.assignment.StationConfiguration;
 
@@ -16,10 +16,10 @@ public class SimulationRunner {
 	private final int numberOfSimulations;
 	private final double simulationTime;
 	private final EventGenerator eventGenerator;
-	private final TestResultsAnalyzer testResultsAnalyzer;
 	private final StationConfiguration stationConfiguration;
 
-	public void run() {
+	public TestResultsRecord run() {
+		final TestResultsRecord testResultsRecord = new TestResultsRecord(stationConfiguration);
 		for (int i = 0; i < numberOfSimulations; i++) {
 			final SimulationStatistics simulationStatistics = SimulationStatisticsFactory.create();
 			final EventQueue eventQueue = new EventQueue();
@@ -29,7 +29,8 @@ public class SimulationRunner {
 					simulationStatistics);
 			new SingleSimulationRunner(simulationTime, eventGenerator, stationAssignment, eventProvider, engine)
 					.run();
-			testResultsAnalyzer.addResults(simulationStatistics.getSimulationResults());
+			testResultsRecord.addResults(simulationStatistics.getSimulationResults());
 		}
+		return testResultsRecord;
 	}
 }

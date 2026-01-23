@@ -1,16 +1,21 @@
 package org.sim.stat.multiple;
 
+import com.google.common.collect.ImmutableMap;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.sim.stat.single.SimulationResults;
+import org.sim.station.StationName;
+import org.sim.station.assignment.StationConfiguration;
 
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 @Slf4j
-public class TestResultsAnalyzer {
+public class TestResultsRecord {
 	private final ConcurrentLinkedDeque<SimulationResults> resultsList;
+	private final ImmutableMap<StationName, Integer> workerConfiguration;
 
-	public TestResultsAnalyzer() {
+	public TestResultsRecord(@NonNull final StationConfiguration stationConfiguration) {
+		this.workerConfiguration = stationConfiguration.workerCountPerStation();
 		this.resultsList = new ConcurrentLinkedDeque<>();
 	}
 
@@ -18,7 +23,7 @@ public class TestResultsAnalyzer {
 		resultsList.add(results);
 	}
 
-	public ConfigurationSummary getResults() {
+	public TestResult getResults() {
 		double minWaitTime = Double.MAX_VALUE;
 		double maxWaitTime = Double.MIN_VALUE;
 		int maxNumberOfServedClients = Integer.MIN_VALUE;
@@ -49,8 +54,9 @@ public class TestResultsAnalyzer {
 		varianceInWaitTime /= resultsList.size();
 		varianceInNumberOfServedClients /= resultsList.size();
 
-		return new ConfigurationSummary(meanWaitTime, meanNumberOfServedClients,
+		return new TestResult(meanWaitTime, meanNumberOfServedClients,
 				minWaitTime, maxWaitTime, Math.sqrt(varianceInWaitTime),
-				minNumberOfServedClients, maxNumberOfServedClients, Math.sqrt(varianceInNumberOfServedClients));
+				minNumberOfServedClients, maxNumberOfServedClients, Math.sqrt(varianceInNumberOfServedClients),
+				workerConfiguration);
 	}
 }

@@ -8,9 +8,8 @@ import org.sim.generator.WorkerCountWithBudgetGenerator;
 import org.sim.run.SimulationRunner;
 import org.sim.station.assignment.StationSpecification;
 import org.sim.generator.EventGenerator;
-import org.sim.stat.multiple.ConfigurationResult;
-import org.sim.stat.multiple.ConfigurationSummary;
-import org.sim.stat.multiple.TestResultsAnalyzer;
+import org.sim.stat.multiple.TestResult;
+import org.sim.stat.multiple.TestResultsRecord;
 import org.sim.station.StationName;
 import org.sim.station.assignment.StationConfiguration;
 
@@ -30,26 +29,22 @@ public class CompositionOptimizer {
 	private final ExecutorService executor;
 
 	public void run() {
-		final List<Future<ConfigurationResult>> futures = new ArrayList<>();
+		final List<Future<TestResult>> futures = new ArrayList<>();
 
 		while (workerCountWithBudgetGenerator.hasNext()) {
 			final ImmutableMap<StationName, Integer> workerCountPerStation = workerCountWithBudgetGenerator.next();
 			final StationConfiguration stationConfiguration = new StationConfiguration(workerCountPerStation,
 					stationSpecifications);
 			futures.add(executor.submit(() -> {
-				final TestResultsAnalyzer testResultsAnalyzer = new TestResultsAnalyzer();
-				new SimulationRunner(numberOfSimulations, simulationTime, eventGenerator,
-						testResultsAnalyzer, stationConfiguration).run();
-				final ConfigurationSummary summary = testResultsAnalyzer.getResults();
-				return new ConfigurationResult(workerCountPerStation,
-						summary.averageWaitTime(), summary.averageServedClients(),
-						summary.minWaitTime(), summary.maxWaitTime(), summary.waitTimeStdDev(),
-						summary.minServedClients(), summary.maxServedClients(), summary.servedClientsStdDev());
+				final TestResultsRecord testResultsRecord = new SimulationRunner(numberOfSimulations,
+						simulationTime, eventGenerator,
+						stationConfiguration).run();
+				return testResultsRecord.getResults();
 			}));
 		}
 
-		final List<ConfigurationResult> results = new ArrayList<>();
-		for (final Future<ConfigurationResult> future : futures) {
+		final List<TestResult> results = new ArrayList<>();
+		for (final Future<TestResult> future : futures) {
 			try {
 				results.add(future.get());
 			} catch (Exception e) {
@@ -58,7 +53,7 @@ public class CompositionOptimizer {
 			}
 		}
 
-		final ConfigurationResult best = results.stream().min(ConfigurationResult::compareTo).orElse(null);
+		final TestResult best = results.stream().min(TestResult::compareTo).orElse(null);
 		if (best != null) {
 			log.info("=== BEST CONFIGURATION ===");
 			log.info("Average served clients: {}", best.averageServedClients());
