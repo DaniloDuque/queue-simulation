@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.sim.generator.EventGenerator;
-import org.sim.generator.WorkerCountGenerator;
 import org.sim.run.SimulationRunner;
 import org.sim.stat.multiple.TestResult;
 import org.sim.station.StationName;
@@ -23,7 +22,6 @@ public class TimeOptimizer {
 	private final int numberOfSimulations;
 	private final double simulationTime;
 	private final EventGenerator eventGenerator;
-	private final WorkerCountGenerator workerCountGenerator;
 	private final ImmutableMap<StationName, StationSpecification> stationSpecifications;
 	private final ExecutorService executor;
 	private final StationPrice stationPrice;
