@@ -14,6 +14,7 @@ import org.sim.station.StationPrice;
 import org.sim.station.assignment.StationConfiguration;
 import org.sim.station.assignment.StationSpecification;
 
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 
 @Slf4j
@@ -27,7 +28,9 @@ public class TimeOptimizer {
 	private final ExecutorService executor;
 	private final StationPrice stationPrice;
 
-	public TestResult getBestConfigurationForBudget(@NonNull final Double budget) {
+	// Returns the test results of the simulation run with the configuration that
+	// has the lowest average wait time, if it exists
+	public Optional<TestResult> getBestConfigurationForBudget(@NonNull final Double budget) {
 		TestResult bestResult = null;
 		double bestAvgWaitTime = Double.MAX_VALUE;
 
@@ -69,6 +72,6 @@ public class TimeOptimizer {
 			}
 		}
 
-		return bestResult;
+		return Optional.ofNullable(bestResult);
 	}
 }

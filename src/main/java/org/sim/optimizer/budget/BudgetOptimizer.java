@@ -12,6 +12,7 @@ import org.sim.stat.multiple.TestResult;
 import org.sim.station.StationName;
 import org.sim.station.assignment.StationSpecification;
 
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 
 @Slf4j
@@ -29,23 +30,22 @@ public class BudgetOptimizer {
 	// minimizes the budget needed to achieve an average wait time of less than
 	// "time"
 	public TestResult getBestConfigurationForTime(@NonNull final Double time) {
-		Double enoughBudget = 4e4;
-		Double insufficientBudget = 22e3;
-		final Double epsilon = 1e-1;
+		Double enoughBudget = 20000.0;
+		Double insufficientBudget = 1550.0;
+		final Double epsilon = 1e2;
 
 		TestResult goodConfig = null;
 
 		while (insufficientBudget + epsilon < enoughBudget) {
-			Double midBudget = (insufficientBudget + enoughBudget) / 2;
-			TestResult result = timeOptimizer.getBestConfigurationForBudget(midBudget);
+			log.info("Budget range: [{}, {}]", insufficientBudget, enoughBudget);
+			final Double midBudget = (insufficientBudget + enoughBudget) / 2;
+			final Optional<TestResult> resultOptional = timeOptimizer.getBestConfigurationForBudget(midBudget);
 
-			if ((result == null) || (result.averageWaitTime() > time)) {
+			if (resultOptional.isEmpty() || resultOptional.get().averageWaitTime() > time) {
 				insufficientBudget = midBudget;
-				log.info("result null");
 			} else {
-				log.info("result not null");
 				enoughBudget = midBudget;
-				goodConfig = result;
+				goodConfig = resultOptional.get();
 			}
 		}
 

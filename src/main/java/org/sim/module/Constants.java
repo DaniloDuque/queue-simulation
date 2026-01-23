@@ -16,12 +16,12 @@ public class Constants {
 	// number of stations
 	public static final int NUMBER_OF_STATIONS = 4;
 
-	// Station distribution parameters
-	public static final double CASHIER_STATION_MEAN = 2.5;
+	// Station distribution parameters (This may need to change)
+	public static final double CASHIER_STATION_MEAN = 1.0;
 	public static final double DRINKS_STATION_MEAN = 0.75;
-	public static final double FRYER_STATION_MEAN = 3.0;
+	public static final double FRYER_STATION_MEAN = 2.2;
 	public static final double FRYER_STATION_STD = 0.5;
-	public static final double CHICKEN_STATION_P = 0.1;
+	public static final double CHICKEN_STATION_P = 0.4;
 
 	// Price per worker on stations
 	public static final double CASHIER_WORKER_PRICE = 500;
@@ -39,8 +39,8 @@ public class Constants {
 
 	// Simulation Parameters
 	public static final int THREAD_POOL_SIZE = 50;
-	public static final int NUMBER_OF_SIMULATIONS_PER_COMBINATION = 5;
+	public static final int NUMBER_OF_SIMULATIONS_PER_COMBINATION = 2;
 	public static final double SIMULATION_TIME_IN_SECONDS = 8.0 * SECONDS_IN_HOUR;
-	public static final double BUDGET = 2000.0;
+	public static final double BUDGET = 15000.0;
 	public static final double MAX_TIME = 3.0 * SECONDS_IN_MINUTE;
 }
