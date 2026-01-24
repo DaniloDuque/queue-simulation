@@ -9,7 +9,6 @@ import org.sim.stat.multiple.TestResult;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.stream.Collectors;
 
 @Slf4j
 @AllArgsConstructor(onConstructor_ = @Inject)
@@ -24,7 +23,7 @@ public class BudgetOptimizer {
 		Double insufficientBudget = 1550.0;
 		final Double epsilon = 1e2;
 
-		List<TestResult> goodConfigs = new ArrayList<>();
+		final List<TestResult> goodConfigs = new ArrayList<>();
 
 		while (insufficientBudget + epsilon < enoughBudget) {
 			log.info("Budget range: [{}, {}]", insufficientBudget, enoughBudget);
@@ -33,16 +32,18 @@ public class BudgetOptimizer {
 
 			List<TestResult> validResults = results.stream()
 					.filter(result -> result.averageWaitTime() <= time)
-					.collect(Collectors.toList());
+					.toList();
+
+			goodConfigs.addAll(validResults);
 
 			if (validResults.isEmpty()) {
 				insufficientBudget = midBudget;
 			} else {
 				enoughBudget = midBudget;
-				goodConfigs = validResults;
 			}
 		}
 
-		return goodConfigs;
+		return goodConfigs.subList(goodConfigs.size() - 3, goodConfigs.size()); // something like this, but this is just
+																				// a proof of concept
 	}
 }
