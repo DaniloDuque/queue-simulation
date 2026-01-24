@@ -30,7 +30,7 @@ public class BudgetOptimizer {
 	// minimizes the budget needed to achieve an average wait time of less than
 	// "time"
 	public TestResult getBestConfigurationForTime(@NonNull final Double time) {
-		Double enoughBudget = 20000.0;
+		Double enoughBudget = 10000.0;
 		Double insufficientBudget = 1550.0;
 		final Double epsilon = 1e2;
 
