@@ -9,6 +9,7 @@ import org.sim.optimizer.budget.BudgetOptimizer;
 import org.sim.optimizer.time.TimeOptimizer;
 import org.sim.stat.multiple.TestResult;
 
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -39,14 +40,18 @@ public class Main {
 		// }
 
 		try {
-			final TestResult best = budgetOptimizer.getBestConfigurationForTime(Constants.MAX_TIME);
+			final List<TestResult> bestList = budgetOptimizer.getTop3ConfigurationsForTime(Constants.MAX_TIME);
 			log.info("=== BEST CONFIGURATION FOR TIME ===");
-			log.info("Average served clients: {}", best.averageServedClients());
-			log.info("Configuration: {}", best.workerConfiguration());
-			log.info("Average wait time: {}", best.averageWaitTime());
-			log.info("Min wait time: {}", best.minWaitTime());
-			log.info("Max wait time: {}", best.maxWaitTime());
-			log.info("Wait time standard deviation: {}", best.waitTimeStdDev());
+			for (TestResult best : bestList) {
+				log.info("---");
+				log.info("Average served clients: {}", best.averageServedClients());
+				log.info("Configuration: {}", best.workerConfiguration());
+				log.info("Average wait time: {}", best.averageWaitTime());
+				log.info("Min wait time: {}", best.minWaitTime());
+				log.info("Max wait time: {}", best.maxWaitTime());
+				log.info("Wait time standard deviation: {}", best.waitTimeStdDev());
+			}
+
 			executor.shutdown();
 			executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
 		} catch (InterruptedException e) {

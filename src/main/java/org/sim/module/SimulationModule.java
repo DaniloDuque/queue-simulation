@@ -95,20 +95,15 @@ public class SimulationModule extends AbstractModule {
 	@Singleton
 	TimeOptimizer provideTimeOptimizer(@NonNull final EventGenerator eventGenerator,
 			@NonNull final ImmutableMap<StationName, StationSpecification> stationSpecifications,
-			@NonNull final ExecutorService executor, @NonNull final StationPrice stationPrice) {
+			@NonNull final StationPrice stationPrice) {
 		return new TimeOptimizer(Constants.NUMBER_OF_SIMULATIONS_PER_COMBINATION, Constants.SIMULATION_TIME_IN_SECONDS,
-				eventGenerator, stationSpecifications, executor, stationPrice);
+				eventGenerator, stationSpecifications, stationPrice);
 	}
 
 	@Provides
 	@Singleton
-	BudgetOptimizer provideBudgetOptimizer(@NonNull final EventGenerator eventGenerator,
-			@NonNull final WorkerCountGenerator workerCountGenerator,
-			@NonNull final ImmutableMap<StationName, StationSpecification> stationSpecifications,
-			@NonNull final ExecutorService executor, @NonNull final TimeOptimizer timeOptimizer) {
-		return new BudgetOptimizer(Constants.NUMBER_OF_SIMULATIONS_PER_COMBINATION,
-				Constants.SIMULATION_TIME_IN_SECONDS,
-				eventGenerator, workerCountGenerator, stationSpecifications, executor, timeOptimizer);
+	BudgetOptimizer provideBudgetOptimizer(@NonNull final TimeOptimizer timeOptimizer) {
+		return new BudgetOptimizer(timeOptimizer);
 	}
 
 	@Provides
