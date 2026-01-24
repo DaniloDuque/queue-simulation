@@ -38,8 +38,8 @@ public class Constants {
 	public static final double CLIENT_NUMBER_OF_ORDER_PER_STATION_P = 2.0 / 5.0;
 
 	// Simulation Parameters
-	public static final int THREAD_POOL_SIZE = 50;
-	public static final int NUMBER_OF_SIMULATIONS_PER_COMBINATION = 2;
+	public static final int THREAD_POOL_SIZE = 20;
+	public static final int NUMBER_OF_SIMULATIONS_PER_COMBINATION = 25;
 	public static final double SIMULATION_TIME_IN_SECONDS = 8.0 * SECONDS_IN_HOUR;
 	public static final double BUDGET = 15000.0;
 	public static final double MAX_TIME = 3.0 * SECONDS_IN_MINUTE;

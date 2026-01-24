@@ -49,20 +49,28 @@ public class TimeOptimizer {
 
 	private Stream<StationConfiguration> generateConfigurations(@NonNull final StationName[] stations,
 			final int[] maxCounts,
-			final int[] current, final int index, final double budget) {
+			final int[] currentCounts, final int index, final double budget) {
+		final double cost = cost(stations, currentCounts);
+
+		if (cost > budget) {
+			return Stream.empty();
+		}
 		if (index == stations.length) {
-			double cost = IntStream.range(0, stations.length)
-					.mapToDouble(i -> current[i] * stationPrice.of(stations[i]))
-					.sum();
-			return cost <= budget ? Stream.of(createConfig(stations, current)) : Stream.empty();
+			return Stream.of(createConfig(stations, currentCounts));
 		}
 
 		return IntStream.rangeClosed(1, maxCounts[index])
 				.boxed()
 				.flatMap(count -> {
-					current[index] = count;
-					return generateConfigurations(stations, maxCounts, current.clone(), index + 1, budget);
+					currentCounts[index] = count;
+					return generateConfigurations(stations, maxCounts, currentCounts.clone(), index + 1, budget);
 				});
+	}
+
+	private double cost(@NonNull final StationName[] stations, final int[] counts) {
+		return IntStream.range(0, stations.length)
+				.mapToDouble(i -> counts[i] * stationPrice.of(stations[i]))
+				.sum();
 	}
 
 	private StationConfiguration createConfig(@NonNull final StationName[] stations, final int[] counts) {
