@@ -21,9 +21,9 @@ public class BudgetOptimizer {
 	public List<TestResult> getTop3ConfigurationsForTime(@NonNull final Double time) {
 		Double enoughBudget = 10000.0;
 		Double insufficientBudget = 1550.0;
-		final Double epsilon = 1e2;
+		final Double epsilon = 5e1;
 
-		final List<TestResult> goodConfigs = new ArrayList<>();
+		List<TestResult> goodConfigs = new ArrayList<>();
 
 		while (insufficientBudget + epsilon < enoughBudget) {
 			log.info("Budget range: [{}, {}]", insufficientBudget, enoughBudget);
@@ -34,16 +34,15 @@ public class BudgetOptimizer {
 					.filter(result -> result.averageWaitTime() <= time)
 					.toList();
 
-			goodConfigs.addAll(validResults);
-
-			if (validResults.isEmpty()) {
+			if (validResults.size() < 3) {
 				insufficientBudget = midBudget;
 			} else {
 				enoughBudget = midBudget;
+				// Only change if all 3 are valid
+				goodConfigs = validResults;
 			}
 		}
 
-		return goodConfigs.subList(goodConfigs.size() - 3, goodConfigs.size()); // something like this, but this is just
-																				// a proof of concept
+		return goodConfigs;
 	}
 }
