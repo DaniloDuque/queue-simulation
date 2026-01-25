@@ -1,10 +1,12 @@
 package org.sim.stat.single;
 
+import com.google.common.collect.ImmutableMap;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.sim.model.client.ClientRecord;
 import org.sim.model.order.Order;
+import org.sim.station.StationName;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -14,6 +16,7 @@ import java.util.stream.Collectors;
 public class SimulationStatistics {
 	private final Collection<Order> servedOrders;
 	private final ClientRecord clientRecord;
+	private final Map<StationName, Collection<Double>> stationServiceTimes;
 
 	public void addServedOrder(@NonNull final Order order) {
 		servedOrders.add(order);
@@ -25,6 +28,10 @@ public class SimulationStatistics {
 
 	public void closeClientOrder(@NonNull final Order order) {
 		clientRecord.completeClientOrder(order.getId());
+	}
+
+	public void recordStationService(@NonNull final StationName stationName, @NonNull final Double serviceTime) {
+		stationServiceTimes.computeIfAbsent(stationName, k -> new ArrayList<>()).add(serviceTime);
 	}
 
 	private Map<Integer, MinMaxPair> getMinMaxPerOrderId() {
@@ -56,7 +63,8 @@ public class SimulationStatistics {
 
 		final double averageWaitTime = numberOfServedClients > 0 ? totalWaitTime / numberOfServedClients : 0.0;
 
-		return new SimulationResults(averageWaitTime, numberOfServedClients, waitTimes);
+		return new SimulationResults(averageWaitTime, numberOfServedClients, waitTimes,
+				ImmutableMap.copyOf(stationServiceTimes));
 	}
 
 }

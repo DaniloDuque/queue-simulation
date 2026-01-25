@@ -18,9 +18,11 @@ public class Station {
 	private final ServiceTimeDistribution serviceTimeDistribution;
 	private final StationQueue stationQueue;
 	private final SimulationStatistics simulationStatistics;
+	private final StationName stationName;
 
-	public Station(@NonNull final StationSpecification stationSpecification, @NonNull final StationQueue stationQueue,
-			@NonNull final SimulationStatistics simulationStatistics) {
+	public Station(@NonNull final StationName stationName, @NonNull final StationSpecification stationSpecification,
+			@NonNull final StationQueue stationQueue, @NonNull final SimulationStatistics simulationStatistics) {
+		this.stationName = stationName;
 		this.serviceTimeDistribution = stationSpecification.dist();
 		this.stationQueue = stationQueue;
 		this.simulationStatistics = simulationStatistics;
@@ -55,6 +57,7 @@ public class Station {
 	private void startService(@NonNull final Order order, @NonNull final EventScheduler eventScheduler,
 			@NonNull final Double currentTime) {
 		final double serviceTime = serviceTimeDistribution.sample();
+		simulationStatistics.recordStationService(stationName, serviceTime);
 		final double leaveTime = serviceTime + currentTime;
 		eventScheduler.schedule(new LeaveEvent(leaveTime, order, eventScheduler)); // Current event in service will
 																					// leave in leaveTime, so schedule

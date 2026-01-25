@@ -7,6 +7,7 @@ import org.sim.stat.single.SimulationResults;
 import org.sim.station.StationName;
 import org.sim.station.assignment.StationConfiguration;
 
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 @Slf4j
@@ -31,6 +32,10 @@ public class TestResultsRecord {
 		double sumOfAverageWaitTimes = 0;
 		int sumOfServedClients = 0;
 
+		// Collect all wait times and station service times
+		final List<Double> allWaitTimes = new ArrayList<>();
+		final Map<StationName, Collection<Double>> allStationTimes = new HashMap<>();
+
 		for (final SimulationResults results : resultsList) {
 			minNumberOfServedClients = Math.min(minNumberOfServedClients, results.numberOfServedClients());
 			maxNumberOfServedClients = Math.max(maxNumberOfServedClients, results.numberOfServedClients());
@@ -38,10 +43,16 @@ public class TestResultsRecord {
 			maxWaitTime = Math.max(maxWaitTime, results.averageWaitTime());
 			sumOfAverageWaitTimes += results.averageWaitTime();
 			sumOfServedClients += results.numberOfServedClients();
+
+			allWaitTimes.addAll(results.waitTimes());
+
+			// Merge station service times
+			results.stationServiceTimes().forEach(
+					(station, times) -> allStationTimes.computeIfAbsent(station, k -> new ArrayList<>()).addAll(times));
 		}
 
-		double meanWaitTime = sumOfAverageWaitTimes / resultsList.size();
-		double meanNumberOfServedClients = (double) sumOfServedClients / resultsList.size();
+		final double meanWaitTime = sumOfAverageWaitTimes / resultsList.size();
+		final double meanNumberOfServedClients = (double) sumOfServedClients / resultsList.size();
 
 		double varianceInWaitTime = 0;
 		double varianceInNumberOfServedClients = 0;
@@ -54,9 +65,18 @@ public class TestResultsRecord {
 		varianceInWaitTime /= resultsList.size();
 		varianceInNumberOfServedClients /= resultsList.size();
 
+		// Calculate detailed statistics
+		final StatisticsCalculator.DetailedStats detailedStats = StatisticsCalculator
+				.calculateDetailedStats(allWaitTimes);
+		final ImmutableMap<String, Double> covariances = StatisticsCalculator
+				.calculateCovariances(allStationTimes);
+
 		return new TestResult(meanWaitTime, meanNumberOfServedClients,
 				minWaitTime, maxWaitTime, Math.sqrt(varianceInWaitTime),
 				minNumberOfServedClients, maxNumberOfServedClients, Math.sqrt(varianceInNumberOfServedClients),
-				workerConfiguration);
+				workerConfiguration,
+				detailedStats.median(), detailedStats.variance(), detailedStats.mode(),
+				detailedStats.q1(), detailedStats.q3(), detailedStats.p90(), detailedStats.p95(), detailedStats.p99(),
+				covariances, allWaitTimes);
 	}
 }

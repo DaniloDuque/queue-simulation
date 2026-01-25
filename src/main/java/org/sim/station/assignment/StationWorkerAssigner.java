@@ -23,7 +23,7 @@ public class StationWorkerAssigner {
 			final StationSpecification stationSpecification = stationsSpecifications.get(stationName);
 			final Integer workerCount = workerCountPerStation.getOrDefault(stationName, 0);
 			final StationQueue stationQueue = StationQueueFactory.create(workerCount);
-			final Station station = new Station(stationSpecification, stationQueue, simulationStatistics);
+			final Station station = new Station(stationName, stationSpecification, stationQueue, simulationStatistics);
 			stations.put(stationName, station);
 		}
 
