@@ -41,10 +41,13 @@ public class Main {
 
 		try {
 			final OptimizerResult bestResults = budgetOptimizer.getTop3ConfigurationsForTime(Constants.MAX_TIME);
-			log.info("=== BEST CONFIGURATION FOR TIME ===");
-			log.info("BUDGET ACHIEVED: {}", bestResults.getOptimizedValue());
-			for (TestResult best : bestResults.getBestResults()) {
+			log.info("=== BEST CONFIGURATIONS FOR TIME ===");
+			// log.info("BUDGET ACHIEVED: {}", bestResults.getOptimizedValue());
+			for (int i = 0; i < Constants.NUMBER_OF_COMBINATIONS_EXPECTED; i++) {
+				final TestResult best = bestResults.getBestResults().get(i);
+				final Double budget = bestResults.getOptimizedValues().get(i);
 				log.info("---");
+				log.info("Budget achieved: {}", budget);
 				log.info("Average served clients: {}", best.averageServedClients());
 				log.info("Configuration: {}", best.workerConfiguration());
 				log.info("Average wait time: {}", best.averageWaitTime());

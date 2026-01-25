@@ -6,6 +6,8 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.sim.optimizer.time.TimeOptimizer;
 import org.sim.stat.multiple.TestResult;
+import org.sim.module.Constants;
+import java.util.Collections;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -24,6 +26,7 @@ public class BudgetOptimizer {
 		final Double epsilon = 5e1;
 
 		List<TestResult> goodConfigs = new ArrayList<>();
+		List<Double> goodBudgets = new ArrayList<>();
 
 		while (insufficientBudget + epsilon < enoughBudget) {
 			log.info("Budget range: [{}, {}]", insufficientBudget, enoughBudget);
@@ -34,15 +37,19 @@ public class BudgetOptimizer {
 					.filter(result -> result.averageWaitTime() <= time)
 					.toList();
 
-			if (validResults.size() < 3) {
+			if (validResults.isEmpty()) {
 				insufficientBudget = midBudget;
 			} else {
 				enoughBudget = midBudget;
-				// Only change if all 3 are valid
-				goodConfigs = validResults;
+
+				goodConfigs.addAll(validResults);
+				goodBudgets.addAll(Collections.nCopies(validResults.size(), enoughBudget));
 			}
 		}
 
-		return new OptimizerResult(enoughBudget, goodConfigs);
+		return new OptimizerResult(
+				goodBudgets.subList(goodBudgets.size() - Constants.NUMBER_OF_COMBINATIONS_EXPECTED, goodBudgets.size()),
+				goodConfigs.subList(goodConfigs.size() - Constants.NUMBER_OF_COMBINATIONS_EXPECTED,
+						goodConfigs.size()));
 	}
 }

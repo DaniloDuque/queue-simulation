@@ -43,4 +43,5 @@ public class Constants {
 	public static final double SIMULATION_TIME_IN_SECONDS = 8.0 * SECONDS_IN_HOUR;
 	public static final double BUDGET = 15000.0;
 	public static final double MAX_TIME = 3.0 * SECONDS_IN_MINUTE;
+	public static final int NUMBER_OF_COMBINATIONS_EXPECTED = 3;
 }
