@@ -53,7 +53,8 @@ public class ScenarioRunner {
 	private static void runScenarioD() {
 		log.info("\n=== SCENARIO D: Reduced Cashier Service Time (2 min) ===");
 		final ScenarioD scenarioD = new ScenarioD();
-		scenarioD.test();
+		final Collection<OptimizerResult> results = scenarioD.test();
+		results.forEach(result -> logOptimizerResult("Reduced Cashier Time", result));
 	}
 
 	private static void runScenarioE() {
