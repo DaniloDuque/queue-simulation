@@ -7,6 +7,7 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.sim.generator.EventGenerator;
+import org.sim.optimizer.OptimizerResult;
 import org.sim.run.SimulationRunner;
 import org.sim.stat.multiple.TestResult;
 import org.sim.station.StationName;
@@ -14,6 +15,7 @@ import org.sim.station.StationPrice;
 import org.sim.station.assignment.StationConfiguration;
 import org.sim.station.assignment.StationSpecification;
 
+import java.util.Comparator;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.Collectors;
@@ -28,7 +30,7 @@ public class TimeOptimizer {
 	private final ImmutableMap<StationName, StationSpecification> stationSpecifications;
 	private final StationPrice stationPrice;
 
-	public List<TestResult> getTop3ConfigurationsForBudget(@NonNull final Double budget) {
+	public OptimizerResult getTop3ConfigurationsForBudget(@NonNull final Double budget) {
 		final StationName[] stations = StationName.values();
 		final int[] maxCounts = new int[stations.length];
 		final int[] current = new int[stations.length];
@@ -39,12 +41,15 @@ public class TimeOptimizer {
 			maxCounts[i] = (int) (budget / stationPrice.of(stations[i]));
 		}
 
-		return generateConfigurations(stations, maxCounts, current, 0, budget)
+		final List<TestResult> results = generateConfigurations(stations, maxCounts, current, 0, budget)
 				.parallel()
 				.map(this::runSimulation)
-				.sorted((r1, r2) -> Double.compare(r1.averageWaitTime(), r2.averageWaitTime()))
+				.sorted(Comparator.comparingDouble(TestResult::averageWaitTime))
 				.limit(3)
 				.collect(Collectors.toList());
+
+		final List<Double> optimizedTimes = results.stream().map(TestResult::averageWaitTime).toList();
+		return new OptimizerResult(optimizedTimes, results);
 	}
 
 	private Stream<StationConfiguration> generateConfigurations(@NonNull final StationName[] stations,

@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.sim.optimizer.OptimizerResult;
 import org.sim.optimizer.time.TimeOptimizer;
 import org.sim.stat.multiple.TestResult;
 import org.sim.module.Constants;
@@ -31,9 +32,9 @@ public class BudgetOptimizer {
 		while (insufficientBudget + epsilon < enoughBudget) {
 			log.info("Budget range: [{}, {}]", insufficientBudget, enoughBudget);
 			final Double midBudget = (insufficientBudget + enoughBudget) / 2;
-			final List<TestResult> results = timeOptimizer.getTop3ConfigurationsForBudget(midBudget);
+			final OptimizerResult optimizerResult = timeOptimizer.getTop3ConfigurationsForBudget(midBudget);
 
-			List<TestResult> validResults = results.stream()
+			List<TestResult> validResults = optimizerResult.getBestResults().stream()
 					.filter(result -> result.averageWaitTime() <= time)
 					.toList();
 

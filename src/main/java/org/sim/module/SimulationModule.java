@@ -4,35 +4,39 @@ import com.google.common.collect.ImmutableMap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.apache.commons.math3.distribution.ExponentialDistribution;
-import org.sim.generator.WorkerCountGenerator;
-import org.sim.optimizer.time.TimeOptimizer;
-import org.sim.station.distribution.ExponentialServiceTimeDistribution;
-import org.sim.station.distribution.GeometricServiceTimeDistribution;
-import org.sim.station.distribution.NormalServiceTimeDistribution;
-import org.sim.generator.CompositionGenerator;
 import org.sim.generator.EventGenerator;
+import org.sim.optimizer.budget.BudgetOptimizer;
+import org.sim.optimizer.time.TimeOptimizer;
 import org.sim.station.StationName;
 import org.sim.station.StationPrice;
 import org.sim.station.assignment.StationSpecification;
-import org.sim.optimizer.CompositionOptimizer;
-import org.sim.optimizer.budget.BudgetOptimizer;
+import org.sim.station.distribution.ExponentialServiceTimeDistribution;
+import org.sim.station.distribution.GeometricServiceTimeDistribution;
+import org.sim.station.distribution.NormalServiceTimeDistribution;
 
-import java.util.concurrent.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
+@AllArgsConstructor
 public class SimulationModule extends AbstractModule {
+	private final SimulationConfiguration config;
 
 	@Provides
 	ImmutableMap<StationName, StationSpecification> provideStationSpecifications() {
 		final StationSpecification cashierStationSpecification = new StationSpecification(
-				new ExponentialServiceTimeDistribution(Constants.CASHIER_STATION_MEAN));
+				new ExponentialServiceTimeDistribution(config.getCashierStationMean()));
 		final StationSpecification drinksStationSpecification = new StationSpecification(
-				new ExponentialServiceTimeDistribution(Constants.DRINKS_STATION_MEAN));
+				new ExponentialServiceTimeDistribution(config.getDrinksStationMean()));
 		final StationSpecification frierStationSpecification = new StationSpecification(
-				new NormalServiceTimeDistribution(Constants.FRYER_STATION_MEAN, Constants.FRYER_STATION_STD));
+				new NormalServiceTimeDistribution(config.getFryerStationMean(), config.getFryerStationStd()));
 		final StationSpecification chickenStationSpecification = new StationSpecification(
-				new GeometricServiceTimeDistribution(Constants.CHICKEN_STATION_P));
+				new GeometricServiceTimeDistribution(config.getChickenStationP()));
 
 		return ImmutableMap.of(
 				StationName.CASHIER, cashierStationSpecification,
@@ -44,20 +48,13 @@ public class SimulationModule extends AbstractModule {
 	@Provides
 	@Singleton
 	ExponentialDistribution provideArrivalDistribution() {
-		return new ExponentialDistribution(1.0 / Constants.CLIENT_ARRIVAL_RATE_PER_SECOND);
+		return new ExponentialDistribution(1.0 / config.getClientArrivalRatePerSecond());
 	}
 
-	// Generators
 	@Provides
 	@Singleton
 	EventGenerator provideEventGenerator(@NonNull final ExponentialDistribution arrivalDistribution) {
 		return new EventGenerator(arrivalDistribution);
-	}
-
-	@Provides
-	@Singleton
-	CompositionGenerator provideCompositionGenerator() {
-		return new CompositionGenerator(Constants.TOTAL_NUMBER_OF_WORKERS, Constants.NUMBER_OF_STATIONS);
 	}
 
 	@Provides
@@ -67,13 +64,6 @@ public class SimulationModule extends AbstractModule {
 				Constants.CASHIER_WORKER_PRICE, StationName.DRINKS, Constants.DRINKS_WORKER_PRICE, StationName.FRYER,
 				Constants.FRYER_WORKER_PRICE, StationName.CHICKEN, Constants.CHICKEN_WORKER_PRICE);
 		return new StationPrice(prices);
-	}
-
-	@Provides
-	@Singleton
-	WorkerCountGenerator provideWorkerCountGenerator(
-			@NonNull final CompositionGenerator compositionGenerator) {
-		return new WorkerCountGenerator(compositionGenerator);
 	}
 
 	@Provides
@@ -96,7 +86,7 @@ public class SimulationModule extends AbstractModule {
 	TimeOptimizer provideTimeOptimizer(@NonNull final EventGenerator eventGenerator,
 			@NonNull final ImmutableMap<StationName, StationSpecification> stationSpecifications,
 			@NonNull final StationPrice stationPrice) {
-		return new TimeOptimizer(Constants.NUMBER_OF_SIMULATIONS_PER_COMBINATION, Constants.SIMULATION_TIME_IN_SECONDS,
+		return new TimeOptimizer(config.getNumberOfSimulations(), config.getSimulationTime(),
 				eventGenerator, stationSpecifications, stationPrice);
 	}
 
@@ -105,17 +95,4 @@ public class SimulationModule extends AbstractModule {
 	BudgetOptimizer provideBudgetOptimizer(@NonNull final TimeOptimizer timeOptimizer) {
 		return new BudgetOptimizer(timeOptimizer);
 	}
-
-	@Provides
-	@Singleton
-	CompositionOptimizer provideCompositionRunner(@NonNull final EventGenerator eventGenerator,
-			@NonNull final WorkerCountGenerator workerCountGenerator,
-			@NonNull final ImmutableMap<StationName, StationSpecification> stationSpecifications,
-			@NonNull final ExecutorService executor) {
-		return new CompositionOptimizer(Constants.NUMBER_OF_SIMULATIONS_PER_COMBINATION,
-				Constants.SIMULATION_TIME_IN_SECONDS, eventGenerator, workerCountGenerator,
-				stationSpecifications,
-				executor);
-	}
-
 }
