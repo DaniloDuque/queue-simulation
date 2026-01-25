@@ -6,10 +6,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.sim.module.Constants;
 import org.sim.module.SimulationModule;
 import org.sim.optimizer.budget.BudgetOptimizer;
+import org.sim.optimizer.budget.OptimizerResult;
 import org.sim.optimizer.time.TimeOptimizer;
 import org.sim.stat.multiple.TestResult;
 
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -40,9 +40,10 @@ public class Main {
 		// }
 
 		try {
-			final List<TestResult> bestList = budgetOptimizer.getTop3ConfigurationsForTime(Constants.MAX_TIME);
+			final OptimizerResult bestResults = budgetOptimizer.getTop3ConfigurationsForTime(Constants.MAX_TIME);
 			log.info("=== BEST CONFIGURATION FOR TIME ===");
-			for (TestResult best : bestList) {
+			log.info("BUDGET ACHIEVED: {}", bestResults.getOptimizedValue());
+			for (TestResult best : bestResults.getBestResults()) {
 				log.info("---");
 				log.info("Average served clients: {}", best.averageServedClients());
 				log.info("Configuration: {}", best.workerConfiguration());

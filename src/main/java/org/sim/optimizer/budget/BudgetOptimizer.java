@@ -18,7 +18,7 @@ public class BudgetOptimizer {
 	// Returns the test results of the simulation run with the configuration that
 	// minimizes the budget needed to achieve an average wait time of less than
 	// "time"
-	public List<TestResult> getTop3ConfigurationsForTime(@NonNull final Double time) {
+	public OptimizerResult getTop3ConfigurationsForTime(@NonNull final Double time) {
 		Double enoughBudget = 10000.0;
 		Double insufficientBudget = 1550.0;
 		final Double epsilon = 5e1;
@@ -43,6 +43,6 @@ public class BudgetOptimizer {
 			}
 		}
 
-		return goodConfigs;
+		return new OptimizerResult(enoughBudget, goodConfigs);
 	}
 }
