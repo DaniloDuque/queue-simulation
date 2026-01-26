@@ -1,9 +1,11 @@
 package org.sim.scenario;
 
 import lombok.extern.slf4j.Slf4j;
+import org.sim.graph.SimpleGraphGenerator;
 import org.sim.optimizer.OptimizerResult;
 import org.sim.stat.multiple.TestResult;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -13,55 +15,99 @@ public class ScenarioRunner {
 	public static void runAllScenarios() {
 		log.info("=== RUNNING ALL SCENARIOS ===");
 
+		final List<List<TestResult>> allScenarioResults = new ArrayList<>();
+		final String[] scenarioNames = { "ScenarioA", "ScenarioB", "ScenarioC", "ScenarioD", "ScenarioE" };
+
 		// Scenario A: Minimum budget for ≤3 min wait time
-		runScenarioA();
+		allScenarioResults.add(runScenarioA());
 
 		// Scenario B: $2000 budget optimization
-		runScenarioB();
+		allScenarioResults.add(runScenarioB());
 
 		// Scenario C: $3000 budget optimization
-		runScenarioC();
+		allScenarioResults.add(runScenarioC());
 
 		// Scenario D: Reduced cashier service time (2 min)
-		runScenarioD();
+		allScenarioResults.add(runScenarioD());
 
 		// Scenario E: 50% chicken probability
-		runScenarioE();
+		allScenarioResults.add(runScenarioE());
+
+		// Generate all graphs
+		log.info("=== GENERATING GRAPHS FOR ALL SCENARIOS ===");
+		for (int i = 0; i < scenarioNames.length; i++) {
+			SimpleGraphGenerator.generateGraphs(scenarioNames[i], allScenarioResults.get(i));
+		}
 	}
 
-	private static void runScenarioA() {
+	private static List<TestResult> runScenarioA() {
 		log.info("\n=== SCENARIO A: Minimum Budget for ≤3 min Wait Time ===");
 		final ScenarioA scenarioA = new ScenarioA();
 		final Collection<OptimizerResult> results = scenarioA.test();
-		results.forEach(result -> logOptimizerResult("Minimum budget for ≤3 min Wait Time", result));
+		final List<TestResult> testResults = new ArrayList<>();
+
+		results.forEach(result -> {
+			logOptimizerResult("Minimum budget for ≤3 min Wait Time", result);
+			testResults.addAll(result.getBestResults());
+		});
+
+		return testResults;
 	}
 
-	private static void runScenarioB() {
+	private static List<TestResult> runScenarioB() {
 		log.info("\n=== SCENARIO B: $2000 Budget Optimization ===");
 		final ScenarioB scenarioB = new ScenarioB();
 		final Collection<OptimizerResult> results = scenarioB.test();
-		results.forEach(result -> logOptimizerResult("$2000 Budget", result));
+		final List<TestResult> testResults = new ArrayList<>();
+
+		results.forEach(result -> {
+			logOptimizerResult("$2000 Budget", result);
+			testResults.addAll(result.getBestResults());
+		});
+
+		return testResults;
 	}
 
-	private static void runScenarioC() {
+	private static List<TestResult> runScenarioC() {
 		log.info("\n=== SCENARIO C: $3000 Budget Optimization ===");
 		final ScenarioC scenarioC = new ScenarioC();
 		final Collection<OptimizerResult> results = scenarioC.test();
-		results.forEach(result -> logOptimizerResult("$3000 Budget", result));
+		final List<TestResult> testResults = new ArrayList<>();
+
+		results.forEach(result -> {
+			logOptimizerResult("$3000 Budget", result);
+			testResults.addAll(result.getBestResults());
+		});
+
+		return testResults;
 	}
 
-	private static void runScenarioD() {
+	private static List<TestResult> runScenarioD() {
 		log.info("\n=== SCENARIO D: Reduced Cashier Service Time (2 min) ===");
 		final ScenarioD scenarioD = new ScenarioD();
 		final Collection<OptimizerResult> results = scenarioD.test();
-		results.forEach(result -> logOptimizerResult("Reduced Cashier Time", result));
+		final List<TestResult> testResults = new ArrayList<>();
+
+		results.forEach(result -> {
+			logOptimizerResult("Reduced Cashier Time", result);
+			testResults.addAll(result.getBestResults());
+		});
+
+		return testResults;
 	}
 
-	private static void runScenarioE() {
+	private static List<TestResult> runScenarioE() {
 		log.info("\n=== SCENARIO E: 50% Chicken Probability ===");
 		final ScenarioE scenarioE = new ScenarioE();
 		final Collection<OptimizerResult> results = scenarioE.test();
-		results.forEach(result -> logOptimizerResult("50% Chicken Probability", result));
+		final List<TestResult> testResults = new ArrayList<>();
+
+		results.forEach(result -> {
+			logOptimizerResult("50% Chicken Probability", result);
+			testResults.addAll(result.getBestResults());
+		});
+
+		return testResults;
 	}
 
 	private static void logOptimizerResult(String scenarioName, OptimizerResult result) {
