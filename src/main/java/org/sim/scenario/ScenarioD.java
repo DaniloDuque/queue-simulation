@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class ScenarioD implements Scenario {
-	private static final double REDUCED_CASHIER_TIME = 1.0; // 2 minutes
+	private static final double REDUCED_CASHIER_TIME = 2.0; // 2 minutes
 	private static final double MAX_WAIT_TIME = 3.0 * 60; // 3 minutes in seconds
 	private static final double BUDGET_2000 = 2000.0;
 	private static final double BUDGET_3000 = 3000.0;

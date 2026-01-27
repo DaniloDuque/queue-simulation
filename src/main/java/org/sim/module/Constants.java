@@ -17,11 +17,11 @@ public class Constants {
 	public static final int NUMBER_OF_STATIONS = 4;
 
 	// Station distribution parameters (This may need to change)
-	public static final double CASHIER_STATION_MEAN = 1.0;
-	public static final double DRINKS_STATION_MEAN = 0.75;
-	public static final double FRYER_STATION_MEAN = 2.2;
-	public static final double FRYER_STATION_STD = 0.5;
-	public static final double CHICKEN_STATION_P = 0.4;
+	public static final double CASHIER_STATION_MEAN = 2.2;
+	public static final double DRINKS_STATION_MEAN = 0.3;
+	public static final double FRYER_STATION_MEAN = 0.3;
+	public static final double FRYER_STATION_STD = 0.3;
+	public static final double CHICKEN_STATION_P = 10.0 / 13.0;
 
 	// Price per worker on stations
 	public static final double CASHIER_WORKER_PRICE = 500;
@@ -30,7 +30,7 @@ public class Constants {
 	public static final double CHICKEN_WORKER_PRICE = 100;
 
 	// Client arrival rate lambda
-	public static final double CLIENT_ARRIVAL_RATE_PER_MINUTE = 3.0;
+	public static final double CLIENT_ARRIVAL_RATE_PER_MINUTE = 1.0;
 	public static final double CLIENT_ARRIVAL_RATE_PER_SECOND = CLIENT_ARRIVAL_RATE_PER_MINUTE / SECONDS_IN_MINUTE;
 
 	// Client number of order per station parameters
@@ -39,7 +39,7 @@ public class Constants {
 
 	// Simulation Parameters
 	public static final int THREAD_POOL_SIZE = 20;
-	public static final int NUMBER_OF_SIMULATIONS_PER_COMBINATION = 1;
+	public static final int NUMBER_OF_SIMULATIONS_PER_COMBINATION = 25;
 	public static final double SIMULATION_TIME_IN_SECONDS = 8.0 * SECONDS_IN_HOUR;
 	public static final double BUDGET = 15000.0;
 	public static final double MAX_TIME = 3.0 * SECONDS_IN_MINUTE;

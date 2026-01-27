@@ -51,8 +51,8 @@ public class SimpleGraphGenerator {
 				PlotOrientation.VERTICAL, false, true, false);
 
 		// Add statistics as subtitle
-        absChart.addSubtitle(new org.jfree.chart.title.TextTitle(
-                String.format("Mean: %.1fs | Median: %.1fs | Mode: %ds | Range: %.1fs | Variance: %.1f",
+		absChart.addSubtitle(new org.jfree.chart.title.TextTitle(
+				String.format("Mean: %.1fs | Median: %.1fs | Mode: %ds | Range: %.1fs | Variance: %.1f",
 						result.averageWaitTime(), result.median(), result.mode(),
 						result.maxWaitTime() - result.minWaitTime(), result.variance())));
 
@@ -80,7 +80,7 @@ public class SimpleGraphGenerator {
 
 		// Add same statistics
 		relChart.addSubtitle(new org.jfree.chart.title.TextTitle(
-                String.format("Mean: %.1fs | Median: %.1fs | Mode: %ds | Range: %.1fs | Variance: %.1f",
+				String.format("Mean: %.1fs | Median: %.1fs | Mode: %ds | Range: %.1fs | Variance: %.1f",
 						result.averageWaitTime(), result.median(), result.mode(),
 						result.maxWaitTime() - result.minWaitTime(), result.variance())));
 
